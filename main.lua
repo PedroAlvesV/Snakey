@@ -123,6 +123,31 @@ local function move_snake(v)
    love.timer.sleep(v)
 end
 
+local function apply_effect(fruit)
+   local effect = fruit:get_effect()
+   if effect == 1 then
+      return -- normal fruit, has no special effect
+   elseif effect == 2 then
+      -- adds several fake fruits
+   elseif effect == 3 then
+      -- hurts/cuts snake
+   elseif effect == 4 then
+      -- mirrors controls
+   elseif effect == 5 then
+      -- turns field
+   elseif effect == 6 then
+      -- adds fake/mimic snake
+   elseif effect == 7 then
+      -- speeds snake up
+   elseif effect == 8 then
+      -- makes snake walk backwards
+   elseif effect == 9 then
+      -- empty
+   elseif effect == 10 then
+      -- empty
+   end
+end
+
 function love.update(dt)
    local function reset_fruit()
       fruit:set_X(love.math.random(2, (w/10)-1))
@@ -157,6 +182,7 @@ function love.update(dt)
          end
          if snake:get_X(1) == fruit:get_X() and snake:get_Y(1) == fruit:get_Y() then
             snake:add_segment()
+            apply_effect(fruit)
             reset_fruit()
             if not mute then
                sfx.ponto:play()
