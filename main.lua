@@ -5,7 +5,7 @@ local Fruit = require 'Fruit'
 
 local w, h = love.window.getMode()
 local hud_height = 50
-local sqr_size = 10
+local sqr_size = 20
 local debug, mute, pause, inic, death = false, false, false, false, false
 local snake, fruit, field, sfx = {}, {}, {}
 local initial_size = 4
@@ -18,6 +18,21 @@ sfx = {
    toque = love.audio.newSource("/sfx/toque.ogg", "static"),
    inicio = love.audio.newSource("/sfx/inicio.ogg", "static"),
 }
+
+local function valid_fruit(snake, fruit)
+   for i=1, #snake:get_segments() do
+      local reset = false
+      while snake:get_X(i) == fruit:get_X() and snake:get_Y(i) == fruit:get_Y() do
+         reset = true
+         fruit:set_X(love.math.random(2, (w/sqr_size)-1))
+         fruit:set_Y(love.math.random(2, (h/sqr_size)-1))
+      end
+      if reset then
+         i = 1
+      end
+   end
+   return fruit
+end
 
 local function start(first_time)
 
@@ -32,7 +47,9 @@ local function start(first_time)
    -- sets snake and fruit
    snake = Snake.new(w/sqr_size/2, h/sqr_size/2)
    fruit = Fruit.new(love.math.random(2, (w/sqr_size)-1), love.math.random(2, (h/sqr_size)-1))
-   for i=2, initial_size do
+   fruit = valid_fruit(snake, fruit)
+
+   for i=1, initial_size-1 do
       snake:add_segment()
    end
    for _, segment in ipairs(snake:get_segments()) do
@@ -94,9 +111,10 @@ local function apply_effect(fruit)
    end
 end
 
-local function reset_fruit()
+local function reset_fruit(fruit)
    fruit:set_X(love.math.random(2, (w/sqr_size)-1))
    fruit:set_Y(love.math.random(2, (h/sqr_size)-1))
+   return fruit
 end
 
 local function die()
@@ -187,7 +205,7 @@ function love.update(dt)
          if snake:get_X(1) == fruit:get_X() and snake:get_Y(1) == fruit:get_Y() then
             snake:add_segment()
             apply_effect(fruit)
-            reset_fruit()
+            fruit = valid_fruit(snake, reset_fruit(fruit))
             if not mute then
                sfx.ponto:play()
             end
