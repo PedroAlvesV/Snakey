@@ -11,6 +11,8 @@ local snake, fruit, field, sfx = {}, {}, {}
 local initial_size = 4
 local v = 0.05
 
+GUI.main_color = GUI.colors.WHITE
+
 love.window.setTitle("Snakey")
 
 sfx = {
