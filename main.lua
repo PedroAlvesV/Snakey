@@ -1,3 +1,5 @@
+local GUI = require 'GUI'
+
 local Snake = require 'Snake'
 local Fruit = require 'Fruit'
 
@@ -193,56 +195,8 @@ function love.update(dt)
 end
 
 function love.draw()
-   local function logo()
-      love.graphics.rectangle("line", w/2-195, h/2-57, 381, 115)
-      love.graphics.rectangle("line", w/2-195, h/2-57, 381, 115)
-      love.graphics.setColor(0,0,0)
-      love.graphics.rectangle("fill", w/2-195, h/2-57, 381, 115)
-      love.graphics.setColor(255,255,255)
-      love.graphics.rectangle("line", w/2-160, h/2+50, 314, 40)
-      love.graphics.rectangle("line", w/2-160, h/2+50, 314, 40)
-      love.graphics.setColor(0,0,0)
-      love.graphics.rectangle("fill", w/2-160, h/2+50, 314, 40)
-      love.graphics.setColor(255,255,255)
-      love.graphics.setFont(love.graphics.newFont(100))
-      love.graphics.print("SNAKE", w/2-171, h/2-55)
-      love.graphics.setFont(love.graphics.newFont(20))
-      love.graphics.print("Press Space to Start", w/2-108, h/2+59)
-   end
-   local function pause_screen()
-      love.graphics.rectangle("line", w/2-195, h/2-57, 381, 115)
-      love.graphics.rectangle("line", w/2-195, h/2-57, 381, 115)
-      love.graphics.setColor(0,0,0)
-      love.graphics.rectangle("fill", w/2-195, h/2-57, 381, 115)
-      love.graphics.setColor(255,255,255)
-      love.graphics.rectangle("line", w/2-160, h/2+50, 314, 40)
-      love.graphics.rectangle("line", w/2-160, h/2+50, 314, 40)
-      love.graphics.setColor(0,0,0)
-      love.graphics.rectangle("fill", w/2-160, h/2+50, 314, 40)
-      love.graphics.setColor(255,255,255)
-      love.graphics.setFont(love.graphics.newFont(100))
-      love.graphics.print("PAUSE", w/2-170, h/2-55)
-      love.graphics.setFont(love.graphics.newFont(20))
-      love.graphics.print("Press Space to Resume", w/2-120, h/2+59)
-   end
-   local function death_screen()
-      love.graphics.rectangle("line", w/2-305, h/2-57, 620, 115)
-      love.graphics.rectangle("line", w/2-305, h/2-57, 620, 115)
-      love.graphics.setColor(0,0,0)
-      love.graphics.rectangle("fill", w/2-305, h/2-57, 620, 115)
-      love.graphics.setColor(255,255,255)
-      love.graphics.rectangle("line", w/2-100, h/2+50, 200, 40)
-      love.graphics.rectangle("line", w/2-100, h/2+50, 200, 40)
-      love.graphics.setColor(0,0,0)
-      love.graphics.rectangle("fill", w/2-100, h/2+50, 200, 40)
-      love.graphics.setColor(255,255,255)
-      love.graphics.setFont(love.graphics.newFont(100))
-      love.graphics.print("Game Over", w/2-280, h/2-55)
-      love.graphics.setFont(love.graphics.newFont(20))
-      love.graphics.print("Score: "..#snake:get_segments()-4, w/2-48, h/2+59)
-   end
    if not inic and not death then
-      logo()
+      GUI.logo_screen(w, h)
    else
       if not death then 
          for i=1, w/10 do
@@ -253,20 +207,14 @@ function love.draw()
             end
          end
          if pause then
-            pause_screen()
+            GUI.pause_screen(w, h)
          end
          if mute then
             love.graphics.setFont(love.graphics.newFont(40))
             love.graphics.print("MUTE", w-117, 0)
          end
---      if debug then
---        love.graphics.setFont(love.graphics.newFont(20))
---        love.graphics.print(snake:get_X(1).."\n"..snake:get_Y(1), w/2, h/2+150)
---        love.graphics.print(a.."\n"..b, w/2-70, h/2+150)
---        love.graphics.print(snake:get_segments()[2].x.."\n"..snake:get_segments()[2].y, w/2+30, h/2+150)
---      end
       else
-         death_screen()
+         GUI.death_screen(w, h, #snake:get_segments()-initial_size)
       end
    end
 end
