@@ -4,6 +4,16 @@ Snakey is a remake of the classic [_Snake_](https://en.wikipedia.org/wiki/Snake_
 
 Currently, it is still in early development, featuring only the basics of the original game.
 
+## Todo
+
+* Add special fruits
+* Fix issue [#1](https://github.com/PedroAlvesV/Snake-LOVE2D/issues/1)
+* Add proper title screen
+* Add borderless option
+* Add ranking
+* Add better sfx
+* Add multiplayer
+
 ## Contributing
 
 1. Create an issue and describe your contribution
