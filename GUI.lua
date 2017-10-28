@@ -17,11 +17,11 @@ function GUI.logo_screen(w, h)
    love.graphics.print("Press Space to Start", w/2-108, h/2+59)
 end
 
-function GUI.draw_field(w, h, field)
-   for i=1, w/10 do
-      for j=1, h/10 do
+function GUI.draw_field(w, h, field, sqr_size)
+   for i=1, w/sqr_size do
+      for j=1, h/sqr_size do
          if field[i][j] then
-            love.graphics.rectangle("fill", i*10-10, j*10-10, 10, 10)
+            love.graphics.rectangle("fill", i*sqr_size-sqr_size, j*sqr_size-sqr_size, sqr_size, sqr_size)
          end
       end
    end

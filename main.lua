@@ -3,11 +3,15 @@ local GUI = require 'GUI'
 local Snake = require 'Snake'
 local Fruit = require 'Fruit'
 
-local w, h = 800, 600
+local w, h = love.window.getMode()
+local hud_height = 50
+local sqr_size = 10
 local debug, mute, pause, inic, death = false, false, false, false, false
 local snake, fruit, field, sfx = {}, {}, {}
 local initial_size = 4
 local v = 0.05
+
+love.window.setTitle("Snakey")
 
 sfx = {
    ponto = love.audio.newSource("/sfx/ponto.ogg", "static"),
@@ -15,21 +19,19 @@ sfx = {
    inicio = love.audio.newSource("/sfx/inicio.ogg", "static"),
 }
 
-love.window.setTitle("Snakey")
-
 local function start(first_time)
 
    -- sets field
-   for i=1, w/10 do
+   for i=1, w/sqr_size do
       field[i] = {}
-      for j=1, h/10 do
-         field[i][j] = i == 1 or j == 1 or i == w/10 or j == h/10
+      for j=1, h/sqr_size do
+         field[i][j] = i == 1 or j == 1 or i == w/sqr_size or j == h/sqr_size
       end
    end
 
    -- sets snake and fruit
-   snake = Snake.new(w/20, h/20)
-   fruit = Fruit.new(love.math.random(2, (w/10)-1), love.math.random(2, (h/10)-1))
+   snake = Snake.new(w/sqr_size/2, h/sqr_size/2)
+   fruit = Fruit.new(love.math.random(2, (w/sqr_size)-1), love.math.random(2, (h/sqr_size)-1))
    for i=2, initial_size do
       snake:add_segment()
    end
@@ -93,8 +95,8 @@ local function apply_effect(fruit)
 end
 
 local function reset_fruit()
-   fruit:set_X(love.math.random(2, (w/10)-1))
-   fruit:set_Y(love.math.random(2, (h/10)-1))
+   fruit:set_X(love.math.random(2, (w/sqr_size)-1))
+   fruit:set_Y(love.math.random(2, (h/sqr_size)-1))
 end
 
 local function die()
@@ -164,13 +166,13 @@ end
 function love.update(dt)
    if inic then
       if not pause and not death then
-         for i=1, w/10 do
-            for j=1, h/10 do
-               field[i][j] = i == 1 or j == 1 or i == w/10 or j == h/10
+         for i=1, w/sqr_size do
+            for j=1, h/sqr_size do
+               field[i][j] = i == 1 or j == 1 or i == w/sqr_size or j == h/sqr_size
             end
          end
          field[fruit:get_X()][fruit:get_Y()] = true
-         if snake:get_X(1) > 1 and snake:get_Y(1) > 1 and snake:get_X(1) < w/10 and snake:get_Y(1) < h/10 then
+         if snake:get_X(1) > 1 and snake:get_Y(1) > 1 and snake:get_X(1) < w/sqr_size and snake:get_Y(1) < h/sqr_size then
             for i, segment in ipairs(snake:get_segments()) do
                if i ~= 1 then
                   if segment.x == snake:get_X(1) and segment.y == snake:get_Y(1) then
@@ -199,7 +201,7 @@ function love.draw()
       GUI.logo_screen(w, h)
    else
       if not death then 
-         GUI.draw_field(w, h, field)
+         GUI.draw_field(w, h, field, sqr_size)
          if pause then
             GUI.pause_screen(w, h)
          end
