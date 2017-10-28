@@ -199,13 +199,7 @@ function love.draw()
       GUI.logo_screen(w, h)
    else
       if not death then 
-         for i=1, w/10 do
-            for j=1, h/10 do
-               if field[i][j] then
-                  love.graphics.rectangle("fill", i*10-10, j*10-10, 10, 10)
-               end
-            end
-         end
+         GUI.draw_field(w, h, field)
          if pause then
             GUI.pause_screen(w, h)
          end
