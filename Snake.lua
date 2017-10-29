@@ -43,18 +43,36 @@ function Snake:get_Y(index)
    return self.segments[index].y
 end
 
-function Snake:set_direction(index, direction)
-   if self.segments[index].direction == 'up' and direction == 'down' then
+function Snake:set_direction(index, new_direction)
+   
+   -- tests if, due to delay between keypressing and action, the validation of direction was bypassed
+   local function is_selfeating()
+      if index == 1 then
+         return self.segments[1].direction == 'up' and self.segments[2].direction == 'down' or
+               self.segments[1].direction == 'down' and self.segments[2].direction == 'up' or
+               self.segments[1].direction == 'left' and self.segments[2].direction == 'right' or
+               self.segments[1].direction == 'right' and self.segments[2].direction == 'left'
+      end
+   end
+   
+   local original_direction = self.segments[index].direction
+   
+   if self.segments[index].direction == 'up' and new_direction == 'down' then
       return
-   elseif self.segments[index].direction == 'down' and direction == 'up' then
+   elseif self.segments[index].direction == 'down' and new_direction == 'up' then
       return
-   elseif self.segments[index].direction == 'right' and direction == 'left' then
+   elseif self.segments[index].direction == 'right' and new_direction == 'left' then
       return
-   elseif self.segments[index].direction == 'left' and direction == 'right' then
+   elseif self.segments[index].direction == 'left' and new_direction == 'right' then
       return
    else
-      self.segments[index].direction = direction
+      self.segments[index].direction = new_direction
    end
+   
+   if is_selfeating() then
+      self.segments[index].direction = original_direction
+   end
+   
 end
 
 function Snake:set_X(index, value)
