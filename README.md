@@ -6,11 +6,10 @@ Currently, it is still in early development, featuring only the basics of the or
 
 ## Todo
 
-* Add special fruits
-* Fix issue [#1](https://github.com/PedroAlvesV/Snake-LOVE2D/issues/1)
-* Add proper title screen
+* Add menus
 * Add borderless option
-* Add ranking
+* Add special fruits
+* Add local ranking
 * Add better sfx
 * Add multiplayer
 
