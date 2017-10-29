@@ -6,6 +6,7 @@ Currently, it is still in early development, featuring only the basics of the or
 
 ## Todo
 
+* Add HUD
 * Add menus
 * Add borderless option
 * Add special fruits
@@ -16,7 +17,7 @@ Currently, it is still in early development, featuring only the basics of the or
 ## Contributing
 
 1. Create an issue and describe your contribution
-2. Fork it (https://github.com/PedroAlvesV/Snake-LOVE2D/fork)
+2. [Fork it](https://github.com/PedroAlvesV/Snakey/fork)
 3. Create a new branch for your contribution (`git checkout -b my-contribution`)
 4. Commit your changes (`git commit -am 'New feature added'`)
 5. Publish the branch (`git push origin my-contribution`)
