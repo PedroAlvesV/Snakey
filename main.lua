@@ -6,10 +6,14 @@ local Fruit = require 'Fruit'
 local w, h = love.window.getMode()
 local hud_height = 50
 local sqr_size = 20
-local debug, mute, pause, inic, death = false, false, false, false, false
-local snake, fruit, field, sfx = {}, {}, {}
 local initial_size = 4
 local v = 0.05
+
+local debug = false
+local is_mute, on_pause, on_main_menu, on_death = false, false, false, false
+
+local field = {}
+local snake, fruit, sfx
 
 GUI.main_color = GUI.colors.WHITE
 
@@ -59,9 +63,10 @@ local function start(first_time)
    end
 
    -- plays start tune
-   if not mute and not first_time then
+   if not is_mute and not first_time then
       sfx.inicio:play()
    end
+   
 end
 
 local function move_snake(v)
@@ -120,9 +125,9 @@ local function reset_fruit(fruit)
 end
 
 local function die()
-   death = true
-   inic = false
-   if not mute then
+   on_death = true
+   on_main_menu = false
+   if not is_mute then
       sfx.toque:play()
    end
 end
@@ -133,7 +138,7 @@ end
 
 function love.keypressed(key)
    if key == ('m') then
-      mute = not mute
+      is_mute = not is_mute
    end
    if key == ('kp-') then
       v = v + 0.05
@@ -144,13 +149,13 @@ function love.keypressed(key)
       end
    end
    if key == ('space') then
-      if inic then
-         pause = not pause
+      if on_main_menu then
+         on_pause = not on_pause
       else
-         if death then
-            death = not death
+         if on_death then
+            on_death = not on_death
          end
-         inic = not death
+         on_main_menu = not on_death
          start(false)
       end
    end
@@ -173,10 +178,10 @@ function love.keypressed(key)
       snake:set_direction(1, key)
    end
    if key == ('escape') then
-      if inic then
-         inic = false
-         pause = false
-         death = false
+      if on_main_menu then
+         on_main_menu = false
+         on_pause = false
+         on_death = false
       else
          love.window.close()
       end
@@ -184,8 +189,8 @@ function love.keypressed(key)
 end
 
 function love.update(dt)
-   if inic then
-      if not pause and not death then
+   if on_main_menu then
+      if not on_pause and not on_death then
          for i=1, w/sqr_size do
             for j=1, h/sqr_size do
                field[i][j] = i == 1 or j == 1 or i == w/sqr_size or j == h/sqr_size
@@ -208,7 +213,7 @@ function love.update(dt)
             snake:add_segment()
             apply_effect(fruit)
             fruit = valid_fruit(snake, reset_fruit(fruit))
-            if not mute then
+            if not is_mute then
                sfx.ponto:play()
             end
          end
@@ -217,20 +222,21 @@ function love.update(dt)
 end
 
 function love.draw()
-   if not inic and not death then
-      GUI.logo_screen(w, h)
+   if not on_main_menu and not on_death then
+      GUI.main_screen(w, h) -- must merely draw screen created on the top of the code
    else
-      if not death then 
-         GUI.draw_field(w, h, field, sqr_size)
-         if pause then
-            GUI.pause_screen(w, h)
+      if not on_death then 
+         GUI.draw_HUD(w, h, snake, hud_height) -- TODO
+         GUI.draw_field(w, h, field, sqr_size) -- this one is handled entirely in GUI
+         if on_pause then
+            GUI.pause_screen(w, h) -- must merely draw screen created on the top of the code
          end
-         if mute then
+         if is_mute then
             love.graphics.setFont(love.graphics.newFont(40))
             love.graphics.print("MUTE", w-117, 0)
          end
       else
-         GUI.death_screen(w, h, #snake:get_segments()-initial_size)
+         GUI.death_screen(w, h, #snake:get_segments()-initial_size) -- must merely draw screen created on the top of the code
       end
    end
 end
