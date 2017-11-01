@@ -15,8 +15,6 @@ local Selector = {} -- like Resolution < 1366x768 >
 
 local colors = GUI.colors
 
-local ASSIST_BUTTONS, NAV_BUTTONS = {}, {}
-
 local actions = {
    PASSTHROUGH = 0,
    HANDLED = -2,
@@ -52,40 +50,22 @@ function AbsMenu.new_screen(title, w, h)
    return self
 end
 
-function Label.new(label)
-   -- MUST EDIT
-   local original_label = label
-   local size = utf8.len(label)
-   local limit = scr_w-8
-   local i = limit
-   while i < size do
-      while label:sub(i, i) ~= " " do
-         i = i - 1
-      end
-      label = label:sub(1, i-1).."\n"..label:sub(i)
-      i = i + limit
-   end
-   local lines = {}
-   for line in label:gmatch("[^\n]*") do
-      if line:sub(1,1) == " " then
-         line = line:sub(2)
-      end
-      table.insert(lines, line)
-   end
+function Label.new(label, properties)
+   -- MUST TEST
    local self = {
-      height = #lines,
-      lines = lines,
-      label = original_label,
+      label = label,
+      color = properties.color,
+      font = properties.font,
       focusable = false,
    }
    return setmetatable(self, { __index = Label })
 end
 
 function Label:draw(x, y)
-   drawable:attrset(colors.default)
-   for i, line in ipairs(self.lines) do
-      drawable:mvaddstr(y+i-1, x, line)
-   end
+   -- MUST TEST
+   self.color = self.color or GUI.get_main_color()
+   self.font = self.font or love.graphics.newFont(20)
+   love.graphics.print(self.label, x, y)
 end
 
 function Button.new(label, callback)
