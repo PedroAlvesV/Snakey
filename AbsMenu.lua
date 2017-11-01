@@ -70,46 +70,62 @@ function Label:draw(x, y)
    love.graphics.draw(text, x, y)
 end
 
-function Button.new(label, callback)
+function Button.new(label, properties)
+   -- MUST TEST
    local self = {
       label = label,
+      fill_colors = {
+         default = properties.fill_colors.default,
+         focused = properties.fill_colors.focused,
+         disabled = properties.fill_colors.disabled,
+      },
+      outline_colors = {
+         default = properties.outline_colors.default,
+         focused = properties.outline_colors.focused,
+         disabled = properties.outline_colors.disabled,
+      },
+      width = properties.width,
+      height = properties.height,
       focusable = true,
-      callback = callback,
+      callback = properties.callback,
       enabled = true,
    }
    return setmetatable(self, { __index = Button })
 end
 
 function Button:draw(x, y, focus)
-   -- MUST EDIT
+   -- MUST TEST
    if self.focusable then
-      drawable:attrset(colors.button)
+      if focus then
+         love.graphics.setColor(unpack(self.fill_colors.focused))
+      else
+         love.graphics.setColor(unpack(self.fill_colors.default))
+      end
+      love.graphics.rectangle("fill", x, y, self.width, self.height)
+      if focus then
+         love.graphics.setColor(unpack(self.outline_colors.focused))
+      else
+         love.graphics.setColor(unpack(self.outline_colors.default))
+      end
+      love.graphics.rectangle("line", x, y, self.width, self.height)
    else
-      drawable:attrset(colors.widget_disabled)
+      love.graphics.setColor(unpack(self.fill_colors.disabled))
+      love.graphics.rectangle("fill", x, y, self.width, self.height)
+      love.graphics.setColor(unpack(self.outline_colors.disabled))
+      love.graphics.rectangle("line", x, y, self.width, self.height)
    end
-   local label = " "..self.label.." "
-   drawable:mvaddstr(y, x+1, label)
-   local left, right = " ", " "
-   if focus and self.focusable then
-      left, right = ">", "<"
-   end
-   drawable:attrset(colors.title)
-   drawable:mvaddstr(y, x, left)
-   drawable:mvaddstr(y, x+string.len(label)+1, right)
+   local label = love.graphics.newText(love.graphics.newFont(20), self.label)
+   love.graphics.draw(label, x, y)
 end
 
 function Button:process_key(key)
-   -- MUST EDIT
+   -- MUST TEST
    if self.focusable then
       if key == keys.ENTER or key == keys.SPACE then
-         if index then
-            return run_callback(self, index, self.label)
-         else
-            return run_callback(self, self.label)
-         end
+         return run_callback(self, self.label)
       end
    end
-   if key == keys.TAB or key == keys.DOWN then
+   if key == keys.DOWN then
       return actions.NEXT
    elseif key == keys.UP then
       return actions.PREVIOUS
