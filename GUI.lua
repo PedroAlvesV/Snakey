@@ -18,6 +18,22 @@ local colors = {
 
 GUI.colors = colors
 
+GUI.main_color = GUI.colors.WHITE
+
+function GUI.set_main_color(color)
+   for i in ipairs(color) do
+      if color[i] < 0 or color[i] > 255 then
+         return false
+      end
+   end
+   GUI.main_color = color
+   return true
+end
+
+function GUI.get_main_color()
+   return GUI.main_color
+end
+
 function GUI.random_color()
    local keyset = {}
    for k in pairs(colors) do

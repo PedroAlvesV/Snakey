@@ -15,7 +15,7 @@ local is_mute, on_pause, on_main_menu, on_death = false, false, false, false
 local field = {}
 local snake, fruit, sfx
 
-GUI.main_color = GUI.colors.WHITE
+--GUI.set_main_color(GUI.colors.WHITE)
 
 love.window.setTitle("Snakey")
 
@@ -223,20 +223,20 @@ end
 
 function love.draw()
    if not on_main_menu and not on_death then
-      GUI.main_screen(w, h) -- must merely draw screen created on the top of the code
+      GUI.main_screen:draw(w, h) -- must merely draw screen created on the top of the code
    else
       if not on_death then 
          GUI.draw_HUD(w, h, snake, hud_height) -- TODO
          GUI.draw_field(w, h, field, sqr_size) -- this one is handled entirely in GUI
          if on_pause then
-            GUI.pause_screen(w, h) -- must merely draw screen created on the top of the code
+            GUI.pause_screen:draw(w, h) -- must merely draw screen created on the top of the code
          end
          if is_mute then
             love.graphics.setFont(love.graphics.newFont(40))
             love.graphics.print("MUTE", w-117, 0)
          end
       else
-         GUI.death_screen(w, h, #snake:get_segments()-initial_size) -- must merely draw screen created on the top of the code
+         GUI.death_screen:draw(w, h, #snake:get_segments()-initial_size) -- must merely draw screen created on the top of the code
       end
    end
 end
