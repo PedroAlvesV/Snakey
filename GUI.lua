@@ -1,23 +1,9 @@
 local GUI = {}
 
-local colors = {
-   BLACK    = {0,0,0},
-   WHITE    = {255,255,255},
-   GRAY     = {128,128,128},
-   RED      = {255,0,0},
-   ORANGE   = {255,128,0},
-   YELLOW   = {255,255,0},
-   LIME     = {128,255,0},
-   GREEN    = {0,255,0},
-   CYAN     = {0,255,255},
-   LBLUE    = {0,128,255},
-   DBLUE    = {0,0,255},
-   PURPLE   = {127,0,255},
-   MAGENTA  = {255,0,255},
-   PINK     = {255,0,127},
-}
+local Util = require("Util")
+local menu = require("AbsMenu")
 
-GUI.colors = colors
+GUI.colors = Util.colors
 
 GUI.main_color = GUI.colors.WHITE
 
@@ -37,10 +23,10 @@ end
 
 function GUI.random_color()
    local keyset = {}
-   for k in pairs(colors) do
+   for k in pairs(GUI.colors) do
       table.insert(keyset, k)
    end
-   return colors[keyset[love.math.random(#keyset)]]
+   return GUI.colors[keyset[love.math.random(#keyset)]]
 end
 
 function GUI.draw_HUD(w, h, snake, hud_height)
@@ -59,8 +45,19 @@ function GUI.draw_field(w, h, field, sqr_size)
 end
 
 function GUI.create_main_screen(w, h)
-   local main_screen
-   -- TODO
+   local main_screen = menu.new_screen(w, h)
+   main_screen:set_background_color(GUI.colors.BLACK)
+   main_screen:add_label('title', "Snakey")
+   local buttons = {
+      {'single', "Single Player"},
+      {'multi', "Multiplayer"},
+      {'opts', "Options"},
+      {'ranks', "Rankings"},
+      {'quit', "Quit"},
+   }
+   for _, item in ipairs(buttons) do
+      main_screen:add_button(unpack(item))
+   end
    GUI.main_screen = main_screen
    return GUI.main_screen
 end
@@ -79,23 +76,24 @@ function GUI.create_pause_screen(w, h)
    return GUI.pause_screen
 end
 
-function GUI.main_screen(w, h)
+--function GUI.main_screen()
+--   GUI.main_screen:run()
    -- must merely call main_screen:draw()
-   love.graphics.rectangle("line", w/2-195, h/2-57, 381, 115)
-   love.graphics.rectangle("line", w/2-195, h/2-57, 381, 115)
-   love.graphics.setColor(unpack(colors.BLACK))
-   love.graphics.rectangle("fill", w/2-195, h/2-57, 381, 115)
-   love.graphics.setColor(unpack(GUI.main_color))
-   love.graphics.rectangle("line", w/2-160, h/2+50, 314, 40)
-   love.graphics.rectangle("line", w/2-160, h/2+50, 314, 40)
-   love.graphics.setColor(unpack(colors.BLACK))
-   love.graphics.rectangle("fill", w/2-160, h/2+50, 314, 40)
-   love.graphics.setColor(unpack(GUI.main_color))
-   love.graphics.setFont(love.graphics.newFont(100))
-   love.graphics.print("SNAKE", w/2-171, h/2-55)
-   love.graphics.setFont(love.graphics.newFont(20))
-   love.graphics.print("Press Space to Start", w/2-108, h/2+59)
-end
+--   love.graphics.rectangle("line", w/2-195, h/2-57, 381, 115)
+--   love.graphics.rectangle("line", w/2-195, h/2-57, 381, 115)
+--   love.graphics.setColor(unpack(colors.BLACK))
+--   love.graphics.rectangle("fill", w/2-195, h/2-57, 381, 115)
+--   love.graphics.setColor(unpack(GUI.main_color))
+--   love.graphics.rectangle("line", w/2-160, h/2+50, 314, 40)
+--   love.graphics.rectangle("line", w/2-160, h/2+50, 314, 40)
+--   love.graphics.setColor(unpack(colors.BLACK))
+--   love.graphics.rectangle("fill", w/2-160, h/2+50, 314, 40)
+--   love.graphics.setColor(unpack(GUI.main_color))
+--   love.graphics.setFont(love.graphics.newFont(100))
+--   love.graphics.print("SNAKE", w/2-171, h/2-55)
+--   love.graphics.setFont(love.graphics.newFont(20))
+--   love.graphics.print("Press Space to Start", w/2-108, h/2+59)
+--end
 
 function GUI.death_screen(w, h, score)
    -- must merely call death_screen:draw()
