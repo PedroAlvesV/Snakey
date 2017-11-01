@@ -1,4 +1,5 @@
 local GUI = require 'GUI'
+local Util = require 'Util'
 
 local Snake = require 'Snake'
 local Fruit = require 'Fruit'
@@ -41,6 +42,8 @@ local function valid_fruit(snake, fruit)
 end
 
 local function start(first_time)
+
+   GUI.create_main_screen(w, h)
 
    -- sets field
    for i=1, w/sqr_size do
@@ -223,7 +226,7 @@ end
 
 function love.draw()
    if not on_main_menu and not on_death then
-      GUI.main_screen:draw(w, h) -- must merely draw screen created on the top of the code
+      GUI.main_screen:run() -- must merely draw screen created on the top of the code
    else
       if not on_death then 
          GUI.draw_HUD(w, h, snake, hud_height) -- TODO

@@ -1,6 +1,6 @@
 local AbsMenu = {}
 
-local GUI = require("GUI")
+local Util = require("Util")
 
 local Screen = {}
 
@@ -13,7 +13,8 @@ local CheckList = {} -- must value
 local Slider = {}
 local Selector = {} -- like Resolution < 1366x768 >
 
-local colors = GUI.colors
+local colors = Util.colors
+local default_bg_color = colors.BLACK
 
 local actions = {
    PASSTHROUGH = 0,
@@ -38,13 +39,13 @@ local function run_callback(self, ...)
    end
 end
 
-function AbsMenu.new_screen(title, w, h)
+function AbsMenu.new_screen(w, h)
    local self = {
-      title = title,
       w = w,
       h = h,
       widgets = {},
       focus = 1,
+      background_color = default_bg_color,
    }
    setmetatable(self, {__index = Screen})
    return self
@@ -52,10 +53,11 @@ end
 
 function Label.new(label, properties)
    -- MUST TEST
+   properties = properties or {}
    local self = {
       label = label,
-      color = properties.color,
-      font = properties.font,
+      color = properties.color or colors.WHITE,
+      font = properties.font or love.graphics.newFont(20),
       focusable = false,
    }
    return setmetatable(self, { __index = Label })
@@ -63,26 +65,30 @@ end
 
 function Label:draw(x, y)
    -- MUST TEST
-   self.color = self.color or GUI.get_main_color()
-   self.font = self.font or love.graphics.newFont(20)
    love.graphics.setColor(unpack(self.color))
    local text = love.graphics.newText(self.font, self.label)
-   love.graphics.draw(text, x, y)
+   love.graphics.draw(text, x, y, nil, nil, nil, text:getWidth()/2, text:getHeight()/2)
 end
 
 function Button.new(label, properties)
    -- MUST TEST
+   properties = properties or {
+      label_color = colors.WHITE,
+      fill_colors = {},
+      outline_colors = {},
+   }
    local self = {
-      label = label,
+      label = love.graphics.newText(love.graphics.newFont(20), label),
+      label_color = properties.label_color,
       fill_colors = {
-         default = properties.fill_colors.default,
-         focused = properties.fill_colors.focused,
-         disabled = properties.fill_colors.disabled,
+         default = properties.fill_colors.default or default_bg_color,
+         focused = properties.fill_colors.focused or default_bg_color,
+         disabled = properties.fill_colors.disabled or default_bg_color,
       },
       outline_colors = {
-         default = properties.outline_colors.default,
-         focused = properties.outline_colors.focused,
-         disabled = properties.outline_colors.disabled,
+         default = properties.outline_colors.default or default_bg_color,
+         focused = properties.outline_colors.focused or default_bg_color,
+         disabled = properties.outline_colors.disabled or default_bg_color,
       },
       width = properties.width,
       height = properties.height,
@@ -90,6 +96,8 @@ function Button.new(label, properties)
       callback = properties.callback,
       enabled = true,
    }
+   self.width = self.width or self.label:getWidth()
+   self.height = self.height or self.label:getHeight()
    return setmetatable(self, { __index = Button })
 end
 
@@ -114,8 +122,8 @@ function Button:draw(x, y, focus)
       love.graphics.setColor(unpack(self.outline_colors.disabled))
       love.graphics.rectangle("line", x, y, self.width, self.height)
    end
-   local label = love.graphics.newText(love.graphics.newFont(20), self.label)
-   love.graphics.draw(label, x, y)
+   love.graphics.setColor(unpack(self.label_color))
+   love.graphics.draw(self.label, x, y, nil, nil, nil, self.label:getWidth()/2, self.label:getHeight()/2)
 end
 
 function Button:process_key(key)
@@ -457,61 +465,86 @@ function TextBox:process_key(key)
    return actions.PASSTHROUGH
 end
 
-function CheckBox.new(label, default_value, callback)
-   -- MUST EDIT
+function CheckBox.new(label, properties)
+   -- MUST TEST
    local self = {
-      height = 1,
       label = label,
-      state = default_value or false,
+      text_colors = {
+         default = properties.text_colors.default or colors.WHITE,
+         focused = properties.text_colors.focused or colors.WHITE,
+         disabled = properties.text_colors.disabled or colors.GRAY,
+      },
+      fill_box_colors = {
+         default = properties.fill_box_colors.default or colors.WHITE,
+         focused = properties.fill_box_colors.focused or colors.WHITE,
+         disabled = properties.fill_box_colors.disabled or colors.WHITE,
+      },
+      outline_box_colors = {
+         default = properties.outline_box_colors.default or colors.BLACK,
+         focused = properties.outline_box_colors.focused or colors.WHITE,
+         disabled = properties.outline_box_colors.disabled or colors.GRAY,
+      },
+      state = properties.state or false,
+      box_align = properties.box_align or 'left',
+      box = {
+         x = 0,
+         y = 0,
+         width = 20,
+         height = 20,
+      },
+      callback = properties.callback,
       focusable = true,
-      tooltip = tooltip,
-      callback = callback,
       enabled = true,
    }
+   self.text = love.graphics.newText(love.graphics.newFont(20), self.label)
    return setmetatable(self, { __index = CheckBox })
 end
 
 function CheckBox:draw(x, y, focus)
-   -- MUST EDIT
-   if not focus then
-      drawable:attrset(colors.default)
+   -- MUST TEST
+   self.box.x, self.box.y = x, y
+   if self.box_align == 'right' then
+      self.box.x = self.box.x + self.text:getWidth()
    else
-      if type(focus) == 'table' then
-         if focus.widget then
-            drawable:attrset(colors.current)
-         end
-         if focus.subitem then
-            if self.focusable then
-               drawable:attrset(colors.subcurrent)
-            end
-         end
+      x = x + self.box.width
+   end
+   if self.enabled then
+      if focus then
+         love.graphics.setColor(unpack(self.fill_box_colors.focused))
+         love.graphics.rectangle("fill", self.box.x, self.box.y, self.box.width, self.box.height)
+         love.graphics.setColor(unpack(self.outline_box_colors.focused))
+         love.graphics.rectangle("line", self.box.x, self.box.y, self.box.width, self.box.height)
+         love.graphics.setColor(unpack(self.text_colors.focused))
       else
-         if self.focusable then
-            drawable:attrset(colors.subcurrent)
-         end
+         love.graphics.setColor(unpack(self.fill_box_colors.default))
+         love.graphics.rectangle("fill", self.box.x, self.box.y, self.box.width, self.box.height)
+         love.graphics.setColor(unpack(self.outline_box_colors.default))
+         love.graphics.rectangle("line", self.box.x, self.box.y, self.box.width, self.box.height)
+         love.graphics.setColor(unpack(self.text_colors.default))
       end
+   else
+      love.graphics.setColor(unpack(self.fill_box_colors.disabled))
+      love.graphics.rectangle("fill", self.box.x, self.box.y, self.box.width, self.box.height)
+      love.graphics.setColor(unpack(self.outline_box_colors.disabled))
+      love.graphics.rectangle("line", self.box.x, self.box.y, self.box.width, self.box.height)
+      love.graphics.setColor(unpack(self.text_colors.disabled))
    end
-   local mark = " "
    if self.state then
-      mark = "x"
+      love.graphics.line(self.box.x, self.box.y, self.box.x + self.box.width, self.box.y + self.box.height)
+      love.graphics.line(self.box.x + self.box.width, self.box.y, self.box.x, self.box.y + self.box.height)
    end
-   local label = util.append_blank_space(self.label, scr_w-utf8.len(self.label)-12)
-   drawable:mvaddstr(y, x, "["..mark.."] "..label)
+   love.graphics.draw(self.text, x, y)
 end
 
-function CheckBox:process_key(key, index)
-   -- MUST EDIT
+function CheckBox:process_key(key)
+   -- MUST TEST
    if self.focusable then
       if key == keys.ENTER or key == keys.SPACE then
          self.state = not self.state
-         if index then
-            run_callback(self, index, self.state, self.label)
-         else
-            run_callback(self, self.state, self.label)
-         end
+         run_callback(self, self.state, self.label)
       end
    end
-   if key == keys.TAB or key == keys.DOWN then
+   if key == keys.DOWN then
       return actions.NEXT
    elseif key == keys.UP then
       return actions.PREVIOUS
@@ -835,6 +868,16 @@ function Screen:show_message_box(message, buttons)
    end
 end
 
+function Screen:set_background_color(color)
+   for i in ipairs(color) do
+      if color[i] < 0 or color[i] > 255 then
+         return false
+      end
+   end
+   self.background_color = color
+   return true
+end
+
 function Screen:set_enabled(id, bool, index)
    -- MUST EDIT
    for _, item in ipairs(self.widgets) do
@@ -952,26 +995,42 @@ function Screen:get_value(id, index)
    end
 end
 
-local function run_screen(screen, pad, wizard)
+local function iter_screen_items(screen)
    -- MUST EDIT
-   local function scroll_screen(item)
-      local widget = item.widget
-      if item.y > pad.min and item.y <= pad.max then
-         if item.y + widget.height - 1 > pad.max then
-            pad.min = pad.min + (item.y + widget.height - pad.max)
-         end
-      else
-         if item.y < pad.min then
-            pad.min = item.y - 1
+   local data = {}
+   for _, item in ipairs(screen.widgets) do
+      if item.id ~= ASSIST_BUTTONS and item.id ~= NAV_BUTTONS then
+         data[item.id] = {}
+         if item.type == 'BUTTON_BOX' or item.type == 'CHECKLIST' then
+            if item.type == 'BUTTON_BOX' then
+               for j=1, #item.widget.buttons do
+                  data[item.id][j] = screen:get_value(item.id, j)
+               end
+            else
+               for j=1, #item.widget.checklist do
+                  data[item.id][j] = {label = nil, state = nil}
+                  data[item.id][j].label, data[item.id][j].state = screen:get_value(item.id, j)
+               end
+            end
          else
-            pad.min = item.y + widget.height - pad.viewport_h + 1
+            local value = screen:get_value(item.id)
+            if item.type == 'CHECKBOX' then
+               local _, v = screen:get_value(item.id)
+               value = v
+            end
+            data[item.id] = value
          end
-      end
-      pad.max = pad.min + pad.viewport_h - 1
-      if pad.total_h > pad.viewport_h then
-         draw_scrollbar(stdscr, scr_w-1, 1, pad.viewport_h-1, pad.total_h-1, pad.min)
       end
    end
+   return data
+end
+
+function Screen:run()
+   love.graphics.setBackgroundColor(unpack(self.background_color))
+   for i, item in ipairs(self.widgets) do
+      item.y = self.h * (i/(#self.widgets+1))
+   end
+   -- MUST EDIT
    local function process_key(key, item)
       local function move_focus(direction)
          local widget = screen.widgets[screen.focus].widget
@@ -1007,108 +1066,10 @@ local function run_screen(screen, pad, wizard)
          return "QUIT"
       end
    end
-   stdscr:attrset(colors.title)
-   local title
-   if wizard and screen.title then
-      title = wizard.title.." - "..screen.title
-   elseif not screen.title then
-      title = wizard.title.." - Page "..wizard.current_page
-   else
-      title = screen.title
+   for i, item in ipairs(self.widgets) do
+      item.widget:draw(self.w/2, item.y, i == self.focus)
    end
-   stdscr:mvaddstr(1, 1, title)
-   for i, item in ipairs(screen.widgets) do
-      local arrow = " "
-      if i == screen.focus then
-         if type(item.widget.tooltip) == 'string' then
-            local tooltip = item.widget.tooltip
-            if item.type == 'BUTTON_BOX' and item.widget.focusable then
-               tooltip = item.widget.buttons[item.widget.subfocus].tooltip or ""
-            end
-            while utf8.len(tooltip) < scr_w do
-               tooltip = tooltip.." "
-            end
-            stdscr:attrset(colors.widget)
-            stdscr:mvaddstr(scr_h-1, 0, tooltip)
-         else
-            clear_tooltip_bar()
-         end
-         arrow = ">"
-         if item.id ~= ASSIST_BUTTONS then
-            scroll_screen(item)
-         end
-      end
-      if item.widget.focusable then
-         screen.pad:attrset(colors.title)
-      else
-         screen.pad:attrset(colors.default)
-      end
-      if item.id == NAV_BUTTONS or item.id == ASSIST_BUTTONS then
-         item.widget:draw(stdscr, scr_w-item.widget.width-1, scr_h-3, i == screen.focus)
-      else
-         screen.pad:mvaddstr(item.y, 1, arrow)
-         item.widget:draw(screen.pad, 3, item.y, i == screen.focus)
-      end
-      screen.pad:prefresh(pad.min, 0, 2, 1, pad.viewport_h, scr_w-2)
-   end
-   stdscr:move(scr_h-1,scr_w-1)
-   return process_key(stdscr:getch(), screen.widgets[screen.focus])
-end
-
-local function iter_screen_items(screen)
-   -- MUST EDIT
-   local data = {}
-   for _, item in ipairs(screen.widgets) do
-      if item.id ~= ASSIST_BUTTONS and item.id ~= NAV_BUTTONS then
-         data[item.id] = {}
-         if item.type == 'BUTTON_BOX' or item.type == 'CHECKLIST' then
-            if item.type == 'BUTTON_BOX' then
-               for j=1, #item.widget.buttons do
-                  data[item.id][j] = screen:get_value(item.id, j)
-               end
-            else
-               for j=1, #item.widget.checklist do
-                  data[item.id][j] = {label = nil, state = nil}
-                  data[item.id][j].label, data[item.id][j].state = screen:get_value(item.id, j)
-               end
-            end
-         else
-            local value = screen:get_value(item.id)
-            if item.type == 'CHECKBOX' then
-               local _, v = screen:get_value(item.id)
-               value = v
-            end
-            data[item.id] = value
-         end
-      end
-   end
-   return data
-end
-
-function Screen:run()
-   -- MUST EDIT
-   local done_curses = function()
-      self.done = true
-   end
-   local function create_assistant_buttons()
-      local labels, callbacks
-      labels = {'Done'}
-      callbacks = {done_curses}
-      self:create_button_box(ASSIST_BUTTONS, labels, callbacks)
-   end
-   self.widgets[#self.widgets].widget.subfocus = 1
-   local pad, actual_pad = create_pad(self)
-   self.pad = actual_pad
-   self.pad:wbkgd(attr_code(colors.default))
-   create_assistant_buttons()
-   while true do
-      if run_screen(self, pad) == "QUIT" then
-         done_curses()
-      end
-      if self.done then
-         return util.collect_data(self, iter_screen_items)
-      end
-   end
+   --return process_key(stdscr:getch(), screen.widgets[screen.focus])
 end
 
 return AbsMenu
