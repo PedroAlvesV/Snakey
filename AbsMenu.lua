@@ -65,7 +65,9 @@ function Label:draw(x, y)
    -- MUST TEST
    self.color = self.color or GUI.get_main_color()
    self.font = self.font or love.graphics.newFont(20)
-   love.graphics.print(self.label, x, y)
+   love.graphics.setColor(unpack(self.color))
+   local text = love.graphics.newText(self.font, self.label)
+   love.graphics.draw(text, x, y)
 end
 
 function Button.new(label, callback)
