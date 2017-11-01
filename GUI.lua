@@ -3,6 +3,7 @@ local GUI = {}
 local colors = {
    BLACK    = {0,0,0},
    WHITE    = {255,255,255},
+   GRAY     = {128,128,128},
    RED      = {255,0,0},
    ORANGE   = {255,128,0},
    YELLOW   = {255,255,0},
