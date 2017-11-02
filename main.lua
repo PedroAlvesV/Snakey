@@ -13,7 +13,7 @@ local control_vars = {
    debug = false,
    is_mute = false,
    on_pause = false,
-   on_main_menu = false,
+   in_game = false,
    on_death = false,
 }
 
@@ -136,7 +136,7 @@ end
 
 local function die()
    control_vars.on_death = true
-   control_vars.on_main_menu = false
+   control_vars.in_game = false
    if not control_vars.is_mute then
       sfx.toque:play()
    end
@@ -160,13 +160,13 @@ function love.keypressed(key)
 --      end
 --   end
 --   if key == ('space') then
---      if control_vars.on_main_menu then
+--      if control_vars.in_game then
 --         control_vars.on_pause = not control_vars.on_pause
 --      else
 --         if control_vars.on_death then
 --            control_vars.on_death = not control_vars.on_death
 --         end
---         control_vars.on_main_menu = not control_vars.on_death
+--         control_vars.in_game = not control_vars.on_death
 --         start(false)
 --      end
 --   end
@@ -189,8 +189,8 @@ function love.keypressed(key)
 --      snake:set_direction(1, key)
 --   end
 --   if key == ('escape') then
---      if control_vars.on_main_menu then
---         control_vars.on_main_menu = false
+--      if control_vars.in_game then
+--         control_vars.in_game = false
 --         control_vars.on_pause = false
 --         control_vars.on_death = false
 --      else
@@ -200,7 +200,7 @@ function love.keypressed(key)
 end
 
 function love.update(dt)
-   if control_vars.on_main_menu then
+   if control_vars.in_game then
       if not control_vars.on_pause and not control_vars.on_death then
          for i=1, w/sqr_size do
             for j=1, h/sqr_size do

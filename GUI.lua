@@ -149,7 +149,7 @@ function GUI.pause_menu(w, h)
 end
 
 function GUI.run(control_vars, snake, initial_size, field, sqr_size)
-   if not control_vars.on_main_menu and not control_vars.on_death then
+   if not control_vars.in_game and not control_vars.on_death then
       return GUI.draw_main_menu()
    else
       if not control_vars.on_death then 
