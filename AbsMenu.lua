@@ -16,22 +16,8 @@ local Selector = {} -- like Resolution < 1366x768 >
 local colors = Util.colors
 local default_bg_color = colors.BLACK
 
-local actions = {
-   PASSTHROUGH = 0,
-   HANDLED = -2,
-   PREVIOUS = -1,
-   NEXT = 1,
-}
-
-local keys = {
-   ENTER = 'return',
-   ESC = 'escape',
-   SPACE = 'space',
-   DOWN = 'down',
-   UP = 'up',
-   LEFT = 'left',
-   RIGHT = 'right',
-}
+local actions = Util.actions
+local keys = Util.keys
 
 local function run_callback(self, ...)
    if self.callback then

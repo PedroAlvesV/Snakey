@@ -3,9 +3,11 @@ local GUI = {}
 local Util = require("Util")
 local menu = require("AbsMenu")
 
-GUI.colors = Util.colors
+local colors = Util.colors
+local keys = Util.keys
+local actions = Util.actions
 
-GUI.main_color = GUI.colors.WHITE
+GUI.main_color = colors.WHITE
 
 GUI.hud_height = 50
 
@@ -25,10 +27,10 @@ end
 
 function GUI.random_color()
    local keyset = {}
-   for k in pairs(GUI.colors) do
+   for k in pairs(colors) do
       table.insert(keyset, k)
    end
-   return GUI.colors[keyset[love.math.random(#keyset)]]
+   return colors[keyset[love.math.random(#keyset)]]
 end
 
 function GUI.draw_HUD(w, h, snake, hud_height)
@@ -58,17 +60,17 @@ function GUI.create_main_menu(x, y, w, h)
    for _, item in ipairs(buttons) do
       item[3] = {
          label_color = {
-            focused = GUI.colors.BLACK,
+            focused = colors.BLACK,
          },
          fill_colors = {
-            default = GUI.colors.BLACK,
-            focused = GUI.colors.WHITE,
-            disabled = GUI.colors.BLACK,
+            default = colors.BLACK,
+            focused = colors.WHITE,
+            disabled = colors.BLACK,
          },
          outline_colors = {
-            default = GUI.colors.WHITE,
-            focused = GUI.colors.WHITE,
-            disabled = GUI.colors.BLACK,
+            default = colors.WHITE,
+            focused = colors.WHITE,
+            disabled = colors.BLACK,
          },
       }
       main_menu:add_button(unpack(item))
@@ -93,7 +95,7 @@ end
 
 function GUI.draw_main_menu()
    GUI.main_menu:run()
-   love.graphics.setColor(unpack(GUI.colors.WHITE))
+   love.graphics.setColor(unpack(colors.WHITE))
    local title = love.graphics.newText(love.graphics.newFont(100), "Snakey")
    local title_w = title:getWidth()
    local title_h = title:getHeight()
@@ -105,7 +107,7 @@ function GUI.draw_main_menu()
    local box_y = title_y - box_h/2
    love.graphics.rectangle("line", box_x, box_y, box_w, box_h)
    love.graphics.rectangle("line", box_x, box_y, box_w, box_h)
-   love.graphics.setColor(unpack(GUI.colors.BLACK))
+   love.graphics.setColor(unpack(colors.BLACK))
    love.graphics.rectangle("fill", box_x, box_y, box_w, box_h)
    love.graphics.setColor(unpack(GUI.main_color))
    love.graphics.draw(title, title_x, title_y, nil, nil, nil, title_w/2, title_h/2)
@@ -116,7 +118,7 @@ function GUI.death_menu(w, h, score)
    -- must merely call death_menu:draw()
    love.graphics.rectangle("line", w/2-305, h/2-57, 620, 115)
    love.graphics.rectangle("line", w/2-305, h/2-57, 620, 115)
-   love.graphics.setColor(unpack(GUI.colors.BLACK))
+   love.graphics.setColor(unpack(colors.BLACK))
    love.graphics.rectangle("fill", w/2-305, h/2-57, 620, 115)
    love.graphics.setColor(unpack(GUI.main_color))
    love.graphics.rectangle("line", w/2-100, h/2+50, 200, 40)

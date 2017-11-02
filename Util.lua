@@ -17,4 +17,21 @@ Util.colors = {
    PINK     = {255,0,127},
 }
 
+Util.actions = {
+   PASSTHROUGH = 0,
+   HANDLED = -2,
+   PREVIOUS = -1,
+   NEXT = 1,
+}
+
+Util.keys = {
+   ENTER = 'return',
+   ESC = 'escape',
+   SPACE = 'space',
+   DOWN = 'down',
+   UP = 'up',
+   LEFT = 'left',
+   RIGHT = 'right',
+}
+
 return Util
