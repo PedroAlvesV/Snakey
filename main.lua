@@ -10,8 +10,13 @@ local sqr_size = 20
 local initial_size = 4
 local v = 0.05
 
-local debug = false
-local is_mute, on_pause, on_main_menu, on_death = false, false, false, false
+local control_vars = {
+   debug = false,
+   is_mute = false,
+   on_pause = false,
+   on_main_menu = false,
+   on_death = false,
+}
 
 local field = {}
 local snake, fruit, sfx
@@ -66,10 +71,10 @@ local function start(first_time)
    end
 
    -- plays start tune
-   if not is_mute and not first_time then
+   if not control_vars.is_mute and not first_time then
       sfx.inicio:play()
    end
-   
+
 end
 
 local function move_snake(v)
@@ -128,9 +133,9 @@ local function reset_fruit(fruit)
 end
 
 local function die()
-   on_death = true
-   on_main_menu = false
-   if not is_mute then
+   control_vars.on_death = true
+   control_vars.on_main_menu = false
+   if not control_vars.is_mute then
       sfx.toque:play()
    end
 end
@@ -141,7 +146,7 @@ end
 
 function love.keypressed(key)
    if key == ('m') then
-      is_mute = not is_mute
+      control_vars.is_mute = not control_vars.is_mute
    end
    if key == ('kp-') then
       v = v + 0.05
@@ -152,18 +157,18 @@ function love.keypressed(key)
       end
    end
    if key == ('space') then
-      if on_main_menu then
-         on_pause = not on_pause
+      if control_vars.on_main_menu then
+         control_vars.on_pause = not control_vars.on_pause
       else
-         if on_death then
-            on_death = not on_death
+         if control_vars.on_death then
+            control_vars.on_death = not control_vars.on_death
          end
-         on_main_menu = not on_death
+         control_vars.on_main_menu = not control_vars.on_death
          start(false)
       end
    end
    if key == ('\'') then
-      debug = not debug
+      control_vars.debug = not control_vars.debug
    end
    if key == ('up') or key == ('down') or key == ('left') or key == ('right') or key == ('w') or key == ('s') or key == ('a') or key == ('d') then
       if key == ('w') then
@@ -181,10 +186,10 @@ function love.keypressed(key)
       snake:set_direction(1, key)
    end
    if key == ('escape') then
-      if on_main_menu then
-         on_main_menu = false
-         on_pause = false
-         on_death = false
+      if control_vars.on_main_menu then
+         control_vars.on_main_menu = false
+         control_vars.on_pause = false
+         control_vars.on_death = false
       else
          love.window.close()
       end
@@ -192,8 +197,8 @@ function love.keypressed(key)
 end
 
 function love.update(dt)
-   if on_main_menu then
-      if not on_pause and not on_death then
+   if control_vars.on_main_menu then
+      if not control_vars.on_pause and not control_vars.on_death then
          for i=1, w/sqr_size do
             for j=1, h/sqr_size do
                field[i][j] = i == 1 or j == 1 or i == w/sqr_size or j == h/sqr_size
@@ -216,7 +221,7 @@ function love.update(dt)
             snake:add_segment()
             apply_effect(fruit)
             fruit = valid_fruit(snake, reset_fruit(fruit))
-            if not is_mute then
+            if not control_vars.is_mute then
                sfx.ponto:play()
             end
          end
@@ -225,16 +230,17 @@ function love.update(dt)
 end
 
 function love.draw()
-   if not on_main_menu and not on_death then
+   --GUI.run(control_vars)
+   if not control_vars.on_main_menu and not control_vars.on_death then
       GUI.main_menu:run() -- must merely draw menu created on the top of the code
    else
-      if not on_death then 
+      if not control_vars.on_death then 
          GUI.draw_HUD(w, h, snake, hud_height) -- TODO
          GUI.draw_field(w, h, field, sqr_size) -- this one is handled entirely in GUI
-         if on_pause then
+         if control_vars.on_pause then
             GUI.pause_menu:draw(w, h) -- must merely draw menu created on the top of the code
          end
-         if is_mute then
+         if control_vars.is_mute then
             love.graphics.setFont(love.graphics.newFont(40))
             love.graphics.print("MUTE", w-117, 0)
          end
