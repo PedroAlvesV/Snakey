@@ -39,8 +39,10 @@ local function run_callback(self, ...)
    end
 end
 
-function AbsMenu.new_menu(w, h)
+function AbsMenu.new_menu(x, y, w, h)
    local self = {
+      x = x,
+      y = y,
       w = w,
       h = h,
       widgets = {},
@@ -1026,7 +1028,8 @@ local function iter_screen_items(screen)
 end
 
 function Menu:run()
-   love.graphics.setBackgroundColor(unpack(self.background_color))
+   love.graphics.setColor(unpack(self.background_color))
+   love.graphics.rectangle('fill', self.x, self.y, self.w, self.h)
    for i, item in ipairs(self.widgets) do
       item.y = self.h * (i/(#self.widgets+1))
    end
@@ -1067,7 +1070,7 @@ function Menu:run()
       end
    end
    for i, item in ipairs(self.widgets) do
-      item.widget:draw(self.w/2, item.y, i == self.focus)
+      item.widget:draw(self.x + self.w/2, self.y + item.y, i == self.focus)
    end
    --return process_key(stdscr:getch(), screen.widgets[screen.focus])
 end

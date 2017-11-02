@@ -43,7 +43,7 @@ end
 
 local function start(first_time)
 
-   GUI.create_main_menu(w, h)
+   GUI.create_main_menu(0, 0, w, h)
 
    -- sets field
    for i=1, w/sqr_size do
