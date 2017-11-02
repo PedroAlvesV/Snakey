@@ -7,6 +7,8 @@ GUI.colors = Util.colors
 
 GUI.main_color = GUI.colors.WHITE
 
+GUI.hud_height = 50
+
 function GUI.set_main_color(color)
    for i in ipairs(color) do
       if color[i] < 0 or color[i] > 255 then
@@ -128,6 +130,26 @@ function GUI.pause_menu(w, h)
    love.graphics.print("PAUSE", w/2-170, h/2-55)
    love.graphics.setFont(love.graphics.newFont(20))
    love.graphics.print("Press Space to Resume", w/2-120, h/2+59)
+end
+
+function GUI.run(control_vars, snake, initial_size, field, sqr_size)
+   if not control_vars.on_main_menu and not control_vars.on_death then
+      GUI.draw_main_menu()
+   else
+      if not control_vars.on_death then 
+         GUI.draw_HUD(GUI.w, GUI.h, snake, GUI.hud_height) -- TODO
+         GUI.draw_field(GUI.w, GUI.h, field, sqr_size) -- this one is handled entirely in GUI
+         if control_vars.on_pause then
+            GUI.pause_menu:draw(GUI.w, GUI.h) -- must merely draw menu created on the top of the code
+         end
+         if control_vars.is_mute then
+            love.graphics.setFont(love.graphics.newFont(40))
+            love.graphics.print("MUTE", GUI.w-117, 0)
+         end
+      else
+         GUI.death_menu:draw(GUI.w, GUI.h, #snake:get_segments()-initial_size) -- must merely draw menu created on the top of the code
+      end
+   end
 end
 
 return GUI

@@ -5,7 +5,6 @@ local Snake = require 'Snake'
 local Fruit = require 'Fruit'
 
 local w, h = love.window.getMode()
-local hud_height = 50
 local sqr_size = 20
 local initial_size = 4
 local v = 0.05
@@ -48,8 +47,9 @@ end
 
 local function start(first_time)
 
-   GUI.create_main_menu(0, 0, w, h)
-
+   GUI.create_main_menu(0, 200, w, h-200)
+   GUI.w, GUI.h = w, h
+   
    -- sets field
    for i=1, w/sqr_size do
       field[i] = {}
@@ -230,22 +230,5 @@ function love.update(dt)
 end
 
 function love.draw()
-   --GUI.run(control_vars)
-   if not control_vars.on_main_menu and not control_vars.on_death then
-      GUI.main_menu:run() -- must merely draw menu created on the top of the code
-   else
-      if not control_vars.on_death then 
-         GUI.draw_HUD(w, h, snake, hud_height) -- TODO
-         GUI.draw_field(w, h, field, sqr_size) -- this one is handled entirely in GUI
-         if control_vars.on_pause then
-            GUI.pause_menu:draw(w, h) -- must merely draw menu created on the top of the code
-         end
-         if control_vars.is_mute then
-            love.graphics.setFont(love.graphics.newFont(40))
-            love.graphics.print("MUTE", w-117, 0)
-         end
-      else
-         GUI.death_menu:draw(w, h, #snake:get_segments()-initial_size) -- must merely draw menu created on the top of the code
-      end
-   end
+   GUI.run(control_vars, snake, initial_size, field, sqr_size)
 end
