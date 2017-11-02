@@ -70,7 +70,7 @@ function Label:draw(x, y)
    love.graphics.draw(text, x, y, nil, nil, nil, text:getWidth()/2, text:getHeight()/2)
 end
 
-function Button.new(label, properties)
+function Button.new(label, properties, callback)
    properties = properties or {}
    properties.label_color = properties.label_color or {}
    properties.fill_colors = properties.fill_colors or {}
@@ -96,7 +96,7 @@ function Button.new(label, properties)
       width = properties.width,
       height = properties.height,
       focusable = true,
-      callback = properties.callback,
+      callback = callback,
       enabled = true,
    }
    self.width = self.width or self.label:getWidth()
@@ -796,8 +796,8 @@ function Menu:add_label(id, label, properties)
    create_widget(self, 'LABEL', Label, id, label, properties)
 end
 
-function Menu:add_button(id, label, callback)
-   create_widget(self, 'BUTTON', Button, id, label, callback)
+function Menu:add_button(id, label, properties, callback)
+   create_widget(self, 'BUTTON', Button, id, label, properties, callback)
 end
 
 function Menu:add_text_input(id, label, visibility, default_value, callback)
