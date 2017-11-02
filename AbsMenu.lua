@@ -2,7 +2,7 @@ local AbsMenu = {}
 
 local Util = require("Util")
 
-local Screen = {}
+local Menu = {}
 
 local Label = {}
 local Button = {}
@@ -39,7 +39,7 @@ local function run_callback(self, ...)
    end
 end
 
-function AbsMenu.new_screen(w, h)
+function AbsMenu.new_menu(w, h)
    local self = {
       w = w,
       h = h,
@@ -47,7 +47,7 @@ function AbsMenu.new_screen(w, h)
       focus = 1,
       background_color = default_bg_color,
    }
-   setmetatable(self, {__index = Screen})
+   setmetatable(self, {__index = Menu})
    return self
 end
 
@@ -783,42 +783,42 @@ local function create_widget(self, type_name, class, id, ...)
    return item.widget
 end
 
-function Screen:add_label(id, label)
+function Menu:add_label(id, label)
    create_widget(self, 'LABEL', Label, id, label)
 end
 
-function Screen:add_button(id, label, callback)
+function Menu:add_button(id, label, callback)
    create_widget(self, 'BUTTON', Button, id, label, callback)
 end
 
-function Screen:add_image(id, path, dimensions, tooltip)
+function Menu:add_image(id, path, dimensions, tooltip)
    return nil
 end
 
-function Screen:add_text_input(id, label, visibility, default_value, callback)
+function Menu:add_text_input(id, label, visibility, default_value, callback)
    create_widget(self, 'TEXT_INPUT', TextInput, id, label, visibility, default_value, callback)
 end
 
-function Screen:add_textbox(id, title, default_value, callback)
+function Menu:add_textbox(id, title, default_value, callback)
    create_widget(self, 'TEXTBOX', TextBox, id, title, default_value, callback)
 end
 
-function Screen:add_checkbox(id, label, default_value, callback)
+function Menu:add_checkbox(id, label, default_value, callback)
    create_widget(self, 'CHECKBOX', CheckBox, id, label, default_value, callback)
 end
 
-function Screen:create_checklist(id, title, list, default_value, callback)
+function Menu:create_checklist(id, title, list, default_value, callback)
    local widget = create_widget(self, 'CHECKLIST', CheckList, id, title, list, default_value, callback)
    for _, checkbox in ipairs(widget.checklist) do
       checkbox.id = id
    end
 end
 
-function Screen:create_selector(id, title, list, default_value, callback)
+function Menu:create_selector(id, title, list, default_value, callback)
    create_widget(self, 'SELECTOR', Selector, id, title, list, default_value, callback)
 end
 
-function Screen:show_message_box(message, buttons)
+function Menu:show_message_box(message, buttons)
    -- MUST EDIT
    local function create_buttons()
       local labels, callbacks
@@ -868,7 +868,7 @@ function Screen:show_message_box(message, buttons)
    end
 end
 
-function Screen:set_background_color(color)
+function Menu:set_background_color(color)
    for i in ipairs(color) do
       if color[i] < 0 or color[i] > 255 then
          return false
@@ -878,7 +878,7 @@ function Screen:set_background_color(color)
    return true
 end
 
-function Screen:set_enabled(id, bool, index)
+function Menu:set_enabled(id, bool, index)
    -- MUST EDIT
    for _, item in ipairs(self.widgets) do
       if item.id == id then
@@ -902,7 +902,7 @@ function Screen:set_enabled(id, bool, index)
    end
 end
 
-function Screen:delete_widget(id)
+function Menu:delete_widget(id)
    -- MUST TEST
    for i, item in ipairs(self.widgets) do
       if item.id == id then
@@ -913,7 +913,7 @@ function Screen:delete_widget(id)
    return false
 end
 
-function Screen:set_value(id, value, index)
+function Menu:set_value(id, value, index)
    -- MUST EDIT
    for _, item in ipairs(self.widgets) do
       if item.id == id then
@@ -964,7 +964,7 @@ function Screen:set_value(id, value, index)
    end
 end
 
-function Screen:get_value(id, index)
+function Menu:get_value(id, index)
    -- MUST EDIT
    for _, item in ipairs(self.widgets) do
       if item.id == id then
@@ -1025,7 +1025,7 @@ local function iter_screen_items(screen)
    return data
 end
 
-function Screen:run()
+function Menu:run()
    love.graphics.setBackgroundColor(unpack(self.background_color))
    for i, item in ipairs(self.widgets) do
       item.y = self.h * (i/(#self.widgets+1))

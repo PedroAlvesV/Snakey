@@ -44,10 +44,9 @@ function GUI.draw_field(w, h, field, sqr_size)
    end
 end
 
-function GUI.create_main_screen(w, h)
-   local main_screen = menu.new_screen(w, h)
-   main_screen:set_background_color(GUI.colors.BLACK)
-   main_screen:add_label('title', "Snakey")
+function GUI.create_main_menu(x, y, w, h)
+   local main_menu = menu.new_menu(x, y, w, h)
+   --main_menu:add_label('title', "Snakey")
    local buttons = {
       {'single', "Single Player"},
       {'multi', "Multiplayer"},
@@ -56,29 +55,29 @@ function GUI.create_main_screen(w, h)
       {'quit', "Quit"},
    }
    for _, item in ipairs(buttons) do
-      main_screen:add_button(unpack(item))
+      main_menu:add_button(unpack(item))
    end
-   GUI.main_screen = main_screen
-   return GUI.main_screen
+   GUI.main_menu = main_menu
+   return GUI.main_menu
 end
 
-function GUI.create_death_screen(w, h)
-   local death_screen
+function GUI.create_death_menu(w, h)
+   local death_menu
    -- TODO
-   GUI.death_screen = death_screen
-   return GUI.death_screen
+   GUI.death_menu = death_menu
+   return GUI.death_menu
 end
 
-function GUI.create_pause_screen(w, h)
-   local pause_screen
+function GUI.create_pause_menu(w, h)
+   local pause_menu
    -- TODO
-   GUI.pause_screen = pause_screen
-   return GUI.pause_screen
+   GUI.pause_menu = pause_menu
+   return GUI.pause_menu
 end
 
---function GUI.main_screen()
---   GUI.main_screen:run()
-   -- must merely call main_screen:draw()
+--function GUI.main_menu()
+--   GUI.main_menu:run()
+   -- must merely call main_menu:draw()
 --   love.graphics.rectangle("line", w/2-195, h/2-57, 381, 115)
 --   love.graphics.rectangle("line", w/2-195, h/2-57, 381, 115)
 --   love.graphics.setColor(unpack(colors.BLACK))
@@ -95,8 +94,8 @@ end
 --   love.graphics.print("Press Space to Start", w/2-108, h/2+59)
 --end
 
-function GUI.death_screen(w, h, score)
-   -- must merely call death_screen:draw()
+function GUI.death_menu(w, h, score)
+   -- must merely call death_menu:draw()
    love.graphics.rectangle("line", w/2-305, h/2-57, 620, 115)
    love.graphics.rectangle("line", w/2-305, h/2-57, 620, 115)
    love.graphics.setColor(unpack(colors.BLACK))
@@ -113,8 +112,8 @@ function GUI.death_screen(w, h, score)
    love.graphics.print("Score: "..score, w/2-48, h/2+59)
 end
 
-function GUI.pause_screen(w, h)
-   -- must merely call pause_screen:draw()
+function GUI.pause_menu(w, h)
+   -- must merely call pause_menu:draw()
    love.graphics.rectangle("line", w/2-195, h/2-57, 381, 115)
    love.graphics.rectangle("line", w/2-195, h/2-57, 381, 115)
    love.graphics.setColor(unpack(colors.BLACK))
