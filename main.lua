@@ -20,6 +20,8 @@ local control_vars = {
 local field = {}
 local snake, fruit, sfx
 
+local current_screen
+
 --GUI.set_main_color(GUI.colors.WHITE)
 
 love.window.setTitle("Snakey")
@@ -145,55 +147,56 @@ function love.load()
 end
 
 function love.keypressed(key)
-   if key == ('m') then
-      control_vars.is_mute = not control_vars.is_mute
-   end
-   if key == ('kp-') then
-      v = v + 0.05
-   end
-   if key == ('kp+') then
-      if v > 0 then
-         v = v - 0.05
-      end
-   end
-   if key == ('space') then
-      if control_vars.on_main_menu then
-         control_vars.on_pause = not control_vars.on_pause
-      else
-         if control_vars.on_death then
-            control_vars.on_death = not control_vars.on_death
-         end
-         control_vars.on_main_menu = not control_vars.on_death
-         start(false)
-      end
-   end
-   if key == ('\'') then
-      control_vars.debug = not control_vars.debug
-   end
-   if key == ('up') or key == ('down') or key == ('left') or key == ('right') or key == ('w') or key == ('s') or key == ('a') or key == ('d') then
-      if key == ('w') then
-         key = 'up'
-      end
-      if key == ('s') then
-         key = 'down'
-      end
-      if key == ('a') then
-         key = 'left'
-      end
-      if key == ('d') then
-         key = 'right'
-      end
-      snake:set_direction(1, key)
-   end
-   if key == ('escape') then
-      if control_vars.on_main_menu then
-         control_vars.on_main_menu = false
-         control_vars.on_pause = false
-         control_vars.on_death = false
-      else
-         love.window.close()
-      end
-   end
+   local action = current_screen:process_key(key)
+--   if key == ('m') then
+--      control_vars.is_mute = not control_vars.is_mute
+--   end
+--   if key == ('kp-') then
+--      v = v + 0.05
+--   end
+--   if key == ('kp+') then
+--      if v > 0 then
+--         v = v - 0.05
+--      end
+--   end
+--   if key == ('space') then
+--      if control_vars.on_main_menu then
+--         control_vars.on_pause = not control_vars.on_pause
+--      else
+--         if control_vars.on_death then
+--            control_vars.on_death = not control_vars.on_death
+--         end
+--         control_vars.on_main_menu = not control_vars.on_death
+--         start(false)
+--      end
+--   end
+--   if key == ('\'') then
+--      control_vars.debug = not control_vars.debug
+--   end
+--   if key == ('up') or key == ('down') or key == ('left') or key == ('right') or key == ('w') or key == ('s') or key == ('a') or key == ('d') then
+--      if key == ('w') then
+--         key = 'up'
+--      end
+--      if key == ('s') then
+--         key = 'down'
+--      end
+--      if key == ('a') then
+--         key = 'left'
+--      end
+--      if key == ('d') then
+--         key = 'right'
+--      end
+--      snake:set_direction(1, key)
+--   end
+--   if key == ('escape') then
+--      if control_vars.on_main_menu then
+--         control_vars.on_main_menu = false
+--         control_vars.on_pause = false
+--         control_vars.on_death = false
+--      else
+--         love.window.close()
+--      end
+--   end
 end
 
 function love.update(dt)
@@ -230,5 +233,5 @@ function love.update(dt)
 end
 
 function love.draw()
-   GUI.run(control_vars, snake, initial_size, field, sqr_size)
+   current_screen = GUI.run(control_vars, snake, initial_size, field, sqr_size)
 end

@@ -800,10 +800,6 @@ function Menu:add_button(id, label, callback)
    create_widget(self, 'BUTTON', Button, id, label, callback)
 end
 
-function Menu:add_image(id, path, dimensions, tooltip)
-   return nil
-end
-
 function Menu:add_text_input(id, label, visibility, default_value, callback)
    create_widget(self, 'TEXT_INPUT', TextInput, id, label, visibility, default_value, callback)
 end
@@ -1034,52 +1030,36 @@ local function iter_screen_items(screen)
    return data
 end
 
+function Menu:process_key(key)
+   local function move_focus(direction)
+      local widget = self.widgets[self.focus].widget
+      local next_focus = self.focus + direction
+      if next_focus > 0 and next_focus <= #self.widgets then
+         self.focus = next_focus
+      end
+      return actions.HANDLED
+   end
+   local widget = self.widgets[self.focus].widget
+   local motion = widget:process_key(key)
+   if motion == actions.PASSTHROUGH then
+      return motion
+   end
+   if motion == actions.PREVIOUS then
+      move_focus(-1)
+   elseif motion == actions.NEXT then
+      move_focus(1)
+   end
+end
+
 function Menu:run()
    love.graphics.setColor(unpack(self.background_color))
    love.graphics.rectangle('fill', self.x, self.y, self.w, self.h)
    for i, item in ipairs(self.widgets) do
       item.y = self.h * (i/(#self.widgets+1))
    end
-   -- MUST EDIT
-   local function process_key(key, item)
-      local function move_focus(direction)
-         local widget = screen.widgets[screen.focus].widget
-         local next_focus = screen.focus + direction
-         if next_focus > 0 and next_focus <= #screen.widgets then
-            screen.focus = next_focus
-         end
-         return actions.HANDLED
-      end
-      local widget = item.widget
-      if key ~= keys.QUIT then
-         local motion = widget:process_key(key)
-         if motion == actions.PASSTHROUGH then
-            if key == keys.LEFT or key == keys.RIGHT then
-               screen.focus = #screen.widgets
-            end
-            if pad.total_h > pad.viewport_h then
-               if key == keys.HOME then
-                  pad.min = 1
-                  scroll_screen(item)
-               elseif key == keys.END then
-                  pad.min = pad.last_pos
-               end
-            end
-            return motion
-         end
-         if motion == actions.PREVIOUS then
-            move_focus(-1)
-         elseif motion == actions.NEXT then
-            move_focus(1)
-         end
-      else
-         return "QUIT"
-      end
-   end
    for i, item in ipairs(self.widgets) do
       item.widget:draw(self.x + self.w/2, self.y + item.y, i == self.focus)
    end
-   --return process_key(stdscr:getch(), screen.widgets[screen.focus])
 end
 
 return AbsMenu

@@ -109,6 +109,7 @@ function GUI.draw_main_menu()
    love.graphics.rectangle("fill", box_x, box_y, box_w, box_h)
    love.graphics.setColor(unpack(GUI.main_color))
    love.graphics.draw(title, title_x, title_y, nil, nil, nil, title_w/2, title_h/2)
+   return GUI.main_menu
 end
 
 function GUI.death_menu(w, h, score)
@@ -149,20 +150,20 @@ end
 
 function GUI.run(control_vars, snake, initial_size, field, sqr_size)
    if not control_vars.on_main_menu and not control_vars.on_death then
-      GUI.draw_main_menu()
+      return GUI.draw_main_menu()
    else
       if not control_vars.on_death then 
          GUI.draw_HUD(GUI.w, GUI.h, snake, GUI.hud_height) -- TODO
          GUI.draw_field(GUI.w, GUI.h, field, sqr_size) -- this one is handled entirely in GUI
          if control_vars.on_pause then
-            GUI.pause_menu:draw(GUI.w, GUI.h) -- must merely draw menu created on the top of the code
+            return GUI.pause_menu:draw(GUI.w, GUI.h) -- must merely draw menu created on the top of the code
          end
          if control_vars.is_mute then
             love.graphics.setFont(love.graphics.newFont(40))
             love.graphics.print("MUTE", GUI.w-117, 0)
          end
       else
-         GUI.death_menu:draw(GUI.w, GUI.h, #snake:get_segments()-initial_size) -- must merely draw menu created on the top of the code
+         return GUI.death_menu:draw(GUI.w, GUI.h, #snake:get_segments()-initial_size) -- must merely draw menu created on the top of the code
       end
    end
 end
