@@ -49,11 +49,11 @@ end
 function GUI.create_main_menu(x, y, w, h)
    local main_menu = menu.new_menu(x, y, w, h)
    local buttons = {
-      {'single', "Single Player"},
-      {'multi', "Multiplayer"},
-      {'opts', "Options"},
-      {'ranks', "Rankings"},
-      {'quit', "Quit"},
+      {'b_singleplr', "Single Player"},
+      {'b_multip', "Multiplayer"},
+      {'b_opts', "Options"},
+      {'b_ranks', "Rankings"},
+      {'b_quit', "Quit"},
    }
    for _, item in ipairs(buttons) do
       item[3] = {
@@ -62,12 +62,12 @@ function GUI.create_main_menu(x, y, w, h)
          },
          fill_colors = {
             default = GUI.colors.BLACK,
-            focused = GUI.colors.GRAY,
+            focused = GUI.colors.WHITE,
             disabled = GUI.colors.BLACK,
          },
          outline_colors = {
             default = GUI.colors.WHITE,
-            focused = GUI.colors.GRAY,
+            focused = GUI.colors.WHITE,
             disabled = GUI.colors.BLACK,
          },
       }
