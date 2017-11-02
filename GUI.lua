@@ -48,7 +48,6 @@ end
 
 function GUI.create_main_menu(x, y, w, h)
    local main_menu = menu.new_menu(x, y, w, h)
-   --main_menu:add_label('title', "Snakey")
    local buttons = {
       {'single', "Single Player"},
       {'multi', "Multiplayer"},
@@ -77,30 +76,31 @@ function GUI.create_pause_menu(w, h)
    return GUI.pause_menu
 end
 
---function GUI.main_menu()
---   GUI.main_menu:run()
-   -- must merely call main_menu:draw()
---   love.graphics.rectangle("line", w/2-195, h/2-57, 381, 115)
---   love.graphics.rectangle("line", w/2-195, h/2-57, 381, 115)
---   love.graphics.setColor(unpack(colors.BLACK))
---   love.graphics.rectangle("fill", w/2-195, h/2-57, 381, 115)
---   love.graphics.setColor(unpack(GUI.main_color))
---   love.graphics.rectangle("line", w/2-160, h/2+50, 314, 40)
---   love.graphics.rectangle("line", w/2-160, h/2+50, 314, 40)
---   love.graphics.setColor(unpack(colors.BLACK))
---   love.graphics.rectangle("fill", w/2-160, h/2+50, 314, 40)
---   love.graphics.setColor(unpack(GUI.main_color))
---   love.graphics.setFont(love.graphics.newFont(100))
---   love.graphics.print("SNAKE", w/2-171, h/2-55)
---   love.graphics.setFont(love.graphics.newFont(20))
---   love.graphics.print("Press Space to Start", w/2-108, h/2+59)
---end
+function GUI.draw_main_menu()
+   GUI.main_menu:run()
+   love.graphics.setColor(unpack(GUI.colors.WHITE))
+   local title = love.graphics.newText(love.graphics.newFont(100), "Snakey")
+   local title_w = title:getWidth()
+   local title_h = title:getHeight()
+   local title_x = math.ceil(GUI.w/2)
+   local title_y = math.ceil(GUI.w/6)
+   local box_w = title_w+30
+   local box_h = title_h+20
+   local box_x = title_x - box_w/2
+   local box_y = title_y - box_h/2
+   love.graphics.rectangle("line", box_x, box_y, box_w, box_h)
+   love.graphics.rectangle("line", box_x, box_y, box_w, box_h)
+   love.graphics.setColor(unpack(GUI.colors.BLACK))
+   love.graphics.rectangle("fill", box_x, box_y, box_w, box_h)
+   love.graphics.setColor(unpack(GUI.main_color))
+   love.graphics.draw(title, title_x, title_y, nil, nil, nil, title_w/2, title_h/2)
+end
 
 function GUI.death_menu(w, h, score)
    -- must merely call death_menu:draw()
    love.graphics.rectangle("line", w/2-305, h/2-57, 620, 115)
    love.graphics.rectangle("line", w/2-305, h/2-57, 620, 115)
-   love.graphics.setColor(unpack(colors.BLACK))
+   love.graphics.setColor(unpack(GUI.colors.BLACK))
    love.graphics.rectangle("fill", w/2-305, h/2-57, 620, 115)
    love.graphics.setColor(unpack(GUI.main_color))
    love.graphics.rectangle("line", w/2-100, h/2+50, 200, 40)
