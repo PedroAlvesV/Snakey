@@ -54,7 +54,6 @@ function AbsMenu.new_menu(x, y, w, h)
 end
 
 function Label.new(label, properties)
-   -- MUST TEST
    properties = properties or {}
    local self = {
       label = label,
@@ -66,22 +65,24 @@ function Label.new(label, properties)
 end
 
 function Label:draw(x, y)
-   -- MUST TEST
    love.graphics.setColor(unpack(self.color))
    local text = love.graphics.newText(self.font, self.label)
    love.graphics.draw(text, x, y, nil, nil, nil, text:getWidth()/2, text:getHeight()/2)
 end
 
 function Button.new(label, properties)
-   -- MUST TEST
-   properties = properties or {
-      label_color = colors.WHITE,
-      fill_colors = {},
-      outline_colors = {},
-   }
+   properties = properties or {}
+   properties.label_color = properties.label_color or {}
+   properties.fill_colors = properties.fill_colors or {}
+   properties.outline_colors = properties.outline_colors or {}
+   for k,v in ipairs(properties) do print(k,v) end
    local self = {
       label = love.graphics.newText(love.graphics.newFont(20), label),
-      label_color = properties.label_color,
+      label_color = {
+         default = properties.label_color.default or colors.WHITE,
+         focused = properties.label_color.focused or colors.WHITE,
+         disabled = properties.label_color.disabled or colors.WHITE,
+      },
       fill_colors = {
          default = properties.fill_colors.default or default_bg_color,
          focused = properties.fill_colors.focused or default_bg_color,
@@ -100,31 +101,37 @@ function Button.new(label, properties)
    }
    self.width = self.width or self.label:getWidth()
    self.height = self.height or self.label:getHeight()
+   self.width = self.width + 15
+   self.height = self.height + 10
    return setmetatable(self, { __index = Button })
 end
 
 function Button:draw(x, y, focus)
-   -- MUST TEST
    if self.focusable then
       if focus then
          love.graphics.setColor(unpack(self.fill_colors.focused))
       else
          love.graphics.setColor(unpack(self.fill_colors.default))
       end
-      love.graphics.rectangle("fill", x, y, self.width, self.height)
+      love.graphics.rectangle("fill", x-self.width/2, y-self.height/2, self.width, self.height)
       if focus then
          love.graphics.setColor(unpack(self.outline_colors.focused))
       else
          love.graphics.setColor(unpack(self.outline_colors.default))
       end
-      love.graphics.rectangle("line", x, y, self.width, self.height)
+      love.graphics.rectangle("line", x-self.width/2, y-self.height/2, self.width, self.height)
    else
       love.graphics.setColor(unpack(self.fill_colors.disabled))
-      love.graphics.rectangle("fill", x, y, self.width, self.height)
+      love.graphics.rectangle("fill", x-self.width/2, y-self.height/2, self.width, self.height)
       love.graphics.setColor(unpack(self.outline_colors.disabled))
-      love.graphics.rectangle("line", x, y, self.width, self.height)
+      love.graphics.rectangle("line", x-self.width/2, y-self.height/2, self.width, self.height)
+      love.graphics.setColor(unpack(self.label_color.disabled))
    end
-   love.graphics.setColor(unpack(self.label_color))
+   if focus then
+      love.graphics.setColor(unpack(self.label_color.focused))
+   elseif self.focusable then
+      love.graphics.setColor(unpack(self.label_color.default))
+   end
    love.graphics.draw(self.label, x, y, nil, nil, nil, self.label:getWidth()/2, self.label:getHeight()/2)
 end
 
@@ -785,8 +792,8 @@ local function create_widget(self, type_name, class, id, ...)
    return item.widget
 end
 
-function Menu:add_label(id, label)
-   create_widget(self, 'LABEL', Label, id, label)
+function Menu:add_label(id, label, properties)
+   create_widget(self, 'LABEL', Label, id, label, properties)
 end
 
 function Menu:add_button(id, label, callback)
