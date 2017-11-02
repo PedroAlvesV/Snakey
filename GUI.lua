@@ -56,6 +56,21 @@ function GUI.create_main_menu(x, y, w, h)
       {'quit', "Quit"},
    }
    for _, item in ipairs(buttons) do
+      item[3] = {
+         label_color = {
+            focused = GUI.colors.BLACK,
+         },
+         fill_colors = {
+            default = GUI.colors.BLACK,
+            focused = GUI.colors.GRAY,
+            disabled = GUI.colors.BLACK,
+         },
+         outline_colors = {
+            default = GUI.colors.WHITE,
+            focused = GUI.colors.GRAY,
+            disabled = GUI.colors.BLACK,
+         },
+      }
       main_menu:add_button(unpack(item))
    end
    GUI.main_menu = main_menu
