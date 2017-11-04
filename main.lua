@@ -37,6 +37,7 @@ end
 local function start(first_time)
 
    GUI.create_main_menu(0, 200, Util.w, Util.h-200)
+   GUI.create_pause_menu(0, 200, Util.w, Util.h-200)
    GUI.w, GUI.h = Util.w, Util.h
 
    -- sets field
