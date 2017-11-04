@@ -65,7 +65,6 @@ function Button.new(label, properties, callback)
    properties.label_color = properties.label_color or {}
    properties.fill_colors = properties.fill_colors or {}
    properties.outline_colors = properties.outline_colors or {}
-   for k,v in ipairs(properties) do print(k,v) end
    local self = {
       label = love.graphics.newText(love.graphics.newFont(20), label),
       label_color = {
@@ -139,22 +138,17 @@ function Button:process_key(key)
    return actions.PASSTHROUGH
 end
 
-function TextInput.new(label, visibility, default_value, callback)
+function TextInput.new(label, default_value, properties, callback)
    -- MUST EDIT
    local self = {
-      height = 1,
       focusable = true,
-      label = label or " ",
-      visibility = visibility,
+      label = label or "",
       text = default_value or "",
       hidden_text_start = "",
       hidden_text_end = "",
-      cursor = 0,
-      tooltip = tooltip,
       callback = callback,
       enabled = true,
    }
-   self.cursor = utf8.len(self.label) + utf8.len(self.text) + 5
    return setmetatable(self, { __index = TextInput })
 end
 
@@ -463,8 +457,12 @@ function TextBox:process_key(key)
    return actions.PASSTHROUGH
 end
 
-function CheckBox.new(label, properties)
-   -- MUST TEST
+function CheckBox.new(label, properties, callback)
+   properties = properties or {}
+   properties.text_colors = properties.text_colors or {}
+   properties.fill_box_colors = properties.fill_box_colors or {}
+   properties.outline_box_colors = properties.outline_box_colors or {}
+   properties.cross_box_colors = properties.cross_box_colors or {}
    local self = {
       label = label,
       text_colors = {
@@ -482,15 +480,20 @@ function CheckBox.new(label, properties)
          focused = properties.outline_box_colors.focused or colors.WHITE,
          disabled = properties.outline_box_colors.disabled or colors.GRAY,
       },
+      cross_box_colors = {
+         default = properties.cross_box_colors.default or colors.BLACK,
+         focused = properties.cross_box_colors.focused or colors.BLACK,
+         disabled = properties.cross_box_colors.disabled or colors.GRAY,
+      },
       state = properties.state or false,
       box_align = properties.box_align or 'left',
       box = {
          x = 0,
          y = 0,
-         width = 20,
-         height = 20,
+         size = 20,
       },
-      callback = properties.callback,
+      gap = 12,
+      callback = callback,
       focusable = true,
       enabled = true,
    }
@@ -499,43 +502,37 @@ function CheckBox.new(label, properties)
 end
 
 function CheckBox:draw(x, y, focus)
-   -- MUST TEST
+   local total_width = self.box.size + self.gap + self.text:getWidth()
    self.box.x, self.box.y = x, y
    if self.box_align == 'right' then
       self.box.x = self.box.x + self.text:getWidth()
    else
-      x = x + self.box.width
+      x = x + self.box.size + self.gap
    end
+   local color_set = 'default'
    if self.enabled then
       if focus then
-         love.graphics.setColor(unpack(self.fill_box_colors.focused))
-         love.graphics.rectangle("fill", self.box.x, self.box.y, self.box.width, self.box.height)
-         love.graphics.setColor(unpack(self.outline_box_colors.focused))
-         love.graphics.rectangle("line", self.box.x, self.box.y, self.box.width, self.box.height)
-         love.graphics.setColor(unpack(self.text_colors.focused))
-      else
-         love.graphics.setColor(unpack(self.fill_box_colors.default))
-         love.graphics.rectangle("fill", self.box.x, self.box.y, self.box.width, self.box.height)
-         love.graphics.setColor(unpack(self.outline_box_colors.default))
-         love.graphics.rectangle("line", self.box.x, self.box.y, self.box.width, self.box.height)
-         love.graphics.setColor(unpack(self.text_colors.default))
+         color_set = 'focused'
       end
    else
-      love.graphics.setColor(unpack(self.fill_box_colors.disabled))
-      love.graphics.rectangle("fill", self.box.x, self.box.y, self.box.width, self.box.height)
-      love.graphics.setColor(unpack(self.outline_box_colors.disabled))
-      love.graphics.rectangle("line", self.box.x, self.box.y, self.box.width, self.box.height)
-      love.graphics.setColor(unpack(self.text_colors.disabled))
+      color_set = 'disabled'
    end
+   love.graphics.setColor(unpack(self.fill_box_colors[color_set]))
+   love.graphics.rectangle("fill", self.box.x-total_width/2, self.box.y, self.box.size, self.box.size)
+   love.graphics.setColor(unpack(self.outline_box_colors[color_set]))
+   love.graphics.rectangle("line", self.box.x-total_width/2, self.box.y, self.box.size, self.box.size)
    if self.state then
-      love.graphics.line(self.box.x, self.box.y, self.box.x + self.box.width, self.box.y + self.box.height)
-      love.graphics.line(self.box.x + self.box.width, self.box.y, self.box.x, self.box.y + self.box.height)
+      love.graphics.setColor(unpack(self.cross_box_colors[color_set]))
+      love.graphics.line(self.box.x - total_width/2 + self.box.size/10, self.box.y + self.box.size/10,
+         self.box.x + self.box.size - total_width/2 - self.box.size/10, self.box.y + self.box.size - self.box.size/10)
+      love.graphics.line(self.box.x + self.box.size - total_width/2 - self.box.size/10, self.box.y + self.box.size/10,
+         self.box.x - total_width/2 + self.box.size/10, self.box.y + self.box.size - self.box.size/10)
    end
-   love.graphics.draw(self.text, x, y)
+   love.graphics.setColor(unpack(self.text_colors[color_set]))
+   love.graphics.draw(self.text, x-total_width/2, y)
 end
 
 function CheckBox:process_key(key)
-   -- MUST TEST
    if self.focusable then
       if key == keys.ENTER or key == keys.SPACE then
          self.state = not self.state
@@ -797,8 +794,8 @@ function Menu:add_textbox(id, title, default_value, callback)
    create_widget(self, 'TEXTBOX', TextBox, id, title, default_value, callback)
 end
 
-function Menu:add_checkbox(id, label, default_value, callback)
-   create_widget(self, 'CHECKBOX', CheckBox, id, label, default_value, callback)
+function Menu:add_checkbox(id, label, properties, callback)
+   create_widget(self, 'CHECKBOX', CheckBox, id, label, properties, callback)
 end
 
 function Menu:create_checklist(id, title, list, default_value, callback)
