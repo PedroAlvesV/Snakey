@@ -6,6 +6,7 @@ local menu = require("AbsMenu")
 local colors = Util.colors
 local keys = Util.keys
 local actions = Util.actions
+local control_vars = Util.control_vars
 
 GUI.main_color = colors.WHITE
 
@@ -35,7 +36,7 @@ function GUI.draw_HUD(x, y, score)
    local text_h = Util.hud_height*0.95
    local score_text = love.graphics.newText(love.graphics.newFont(text_h), "Score: "..score)
    love.graphics.setColor(GUI.main_color)
-   if Util.control_vars.is_mute then
+   if control_vars.is_mute then
       local mute_text = love.graphics.newText(love.graphics.newFont(text_h), "MUTE")
       love.graphics.draw(mute_text, Util.w-mute_text:getWidth(), y)
    end
@@ -55,30 +56,30 @@ end
 
 function GUI.create_main_menu(x, y, w, h)
    local main_menu = menu.new_menu(x, y, w, h)
+   local colors_props = {
+      label_color = {
+         default = GUI.main_color,
+         focused = colors.BLACK,
+      },
+      fill_colors = {
+         default = colors.BLACK,
+         focused = GUI.main_color,
+         disabled = colors.BLACK,
+      },
+      outline_colors = {
+         default = GUI.main_color,
+         focused = GUI.main_color,
+         disabled = colors.BLACK,
+      },
+   }
    local buttons = {
-      {'b_singleplr', "Single Player"},
-      {'b_multip', "Multiplayer"},
-      {'b_opts', "Options"},
-      {'b_ranks', "Rankings"},
-      {'b_quit', "Quit"},
+      {'b_singleplr', "Single Player", colors_props, function() Util.current_screen = Util.screens.on_singleplayer_game end},
+      {'b_multip', "Multiplayer", colors_props},
+      {'b_opts', "Options", colors_props},
+      {'b_ranks', "Rankings", colors_props},
+      {'b_quit', "Quit", colors_props, function() love.window.close() end},
    }
    for _, item in ipairs(buttons) do
-      item[3] = {
-         label_color = {
-            default = GUI.main_color,
-            focused = colors.BLACK,
-         },
-         fill_colors = {
-            default = colors.BLACK,
-            focused = GUI.main_color,
-            disabled = colors.BLACK,
-         },
-         outline_colors = {
-            default = GUI.main_color,
-            focused = GUI.main_color,
-            disabled = colors.BLACK,
-         },
-      }
       main_menu:add_button(unpack(item))
    end
    GUI.main_menu = main_menu
@@ -160,19 +161,24 @@ function GUI.pause_menu(w, h)
 end
 
 function GUI.run(snake, field)
-   if not Util.control_vars.in_game and not Util.control_vars.on_death then
+   if Util.current_screen == Util.screens.on_main then
       return GUI.draw_main_menu()
-   else
-      if not Util.control_vars.on_death then 
-         GUI.draw_HUD(0, 0, #snake:get_segments()-Util.initial_size)
-         GUI.draw_field(0, Util.hud_height, GUI.w, GUI.h-Util.hud_height, field, Util.sqr_size)
-         if Util.control_vars.on_pause then
-            return GUI.pause_menu:draw(GUI.w, GUI.h) -- must merely draw menu created on the top of the code
-         end
-      else
-         GUI.create_death_menu(GUI.w, GUI.h, #snake:get_segments()-Util.initial_size)
-         return GUI.draw_death_menu(GUI.w, GUI.h) -- must merely draw menu created on the top of the code
-      end
+   elseif Util.current_screen == Util.screens.on_pause then
+      return GUI.pause_menu:draw(GUI.w, GUI.h)
+   elseif Util.current_screen == Util.screens.on_death then
+      GUI.create_death_menu(GUI.w, GUI.h, #snake:get_segments()-Util.initial_size)
+      return GUI.draw_death_menu(GUI.w, GUI.h)
+   elseif Util.current_screen == Util.screens.on_singleplayer_game then
+      GUI.draw_HUD(0, 0, #snake:get_segments()-Util.initial_size)
+      GUI.draw_field(0, Util.hud_height, GUI.w, GUI.h-Util.hud_height, field, Util.sqr_size)
+   elseif Util.current_screen == Util.screens.on_multiplayer_setup then
+      -- TODO
+   elseif Util.current_screen == Util.screens.on_multiplayer_game then
+      -- TODO
+   elseif Util.current_screen == Util.screens.on_options then
+      -- TODO
+   elseif Util.current_screen == Util.screens.on_rankings then
+      -- TODO
    end
 end
 

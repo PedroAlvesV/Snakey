@@ -7,8 +7,6 @@ local Fruit = require 'Fruit'
 local field = {}
 local snake, fruit, sfx
 
-local current_screen
-
 --GUI.set_main_color(GUI.colors.WHITE)
 
 love.window.setTitle("Snakey")
@@ -38,14 +36,13 @@ local function start(first_time)
 
    GUI.create_main_menu(0, 200, Util.w, Util.h-200)
    GUI.w, GUI.h = Util.w, Util.h
-   
+
    -- sets field
    for i=1, Util.field_w do
       field[i] = {}
       for j=1, Util.field_h do
          field[i][j] = i == 1 or j == 1 or i == Util.field_w or j == Util.field_h
       end
-      print(Util.field_w, Util.field_h)
    end
 
    -- sets snake and fruit
@@ -123,8 +120,7 @@ local function reset_fruit(fruit)
 end
 
 local function die()
-   Util.control_vars.on_death = true
-   Util.control_vars.in_game = false
+   Util.current_screen = Util.screens.on_death
    if not Util.control_vars.is_mute then
       sfx.toque:play()
    end
@@ -136,6 +132,7 @@ end
 
 function love.keypressed(key)
    local action = current_screen:process_key(key)
+   -- TODO
 --   if key == ('m') then
 --      control_vars.is_mute = not control_vars.is_mute
 --   end
@@ -147,17 +144,17 @@ function love.keypressed(key)
 --         v = v - 0.05
 --      end
 --   end
-   if key == ('space') then
-      if Util.control_vars.in_game then
-         Util.control_vars.on_pause = not Util.control_vars.on_pause
-      else
-         if Util.control_vars.on_death then
-            Util.control_vars.on_death = not Util.control_vars.on_death
-         end
-         Util.control_vars.in_game = not Util.control_vars.on_death
-         start(false)
-      end
-   end
+--   if key == ('space') then
+--      if Util.control_vars.in_game then
+--         Util.control_vars.on_pause = not Util.control_vars.on_pause
+--      else
+--         if Util.control_vars.on_death then
+--            Util.control_vars.on_death = not Util.control_vars.on_death
+--         end
+--         Util.control_vars.in_game = not Util.control_vars.on_death
+--         start(false)
+--      end
+--   end
 --   if key == ('\'') then
 --      Util.control_vars.debug = not Util.control_vars.debug
 --   end
@@ -188,35 +185,35 @@ function love.keypressed(key)
 end
 
 function love.update(dt)
-   if Util.control_vars.in_game then
-      if not Util.control_vars.on_pause and not Util.control_vars.on_death then
-         for i=1, Util.field_w do
-            for j=1, Util.field_h do
-               field[i][j] = i == 1 or j == 1 or i == Util.field_w or j == Util.field_h
-            end
-         end
-         field[fruit:get_X()][fruit:get_Y()] = true
-         if snake:get_X(1) > 1 and snake:get_Y(1) > 1 and snake:get_X(1) < Util.field_w and snake:get_Y(1) < Util.field_h then
-            for i, segment in ipairs(snake:get_segments()) do
-               if i ~= 1 then
-                  if segment.x == snake:get_X(1) and segment.y == snake:get_Y(1) then
-                     die()
-                  end
-               end
-            end
-            move_snake()
-         else
-            die()
-         end
-         if snake:get_X(1) == fruit:get_X() and snake:get_Y(1) == fruit:get_Y() then
-            snake:add_segment()
-            apply_effect(fruit)
-            fruit = valid_fruit(snake, reset_fruit(fruit))
-            if not Util.control_vars.is_mute then
-               sfx.ponto:play()
-            end
+   if Util.current_screen == Util.screens.on_singleplayer_game then
+      for i=1, Util.field_w do
+         for j=1, Util.field_h do
+            field[i][j] = i == 1 or j == 1 or i == Util.field_w or j == Util.field_h
          end
       end
+      field[fruit:get_X()][fruit:get_Y()] = true
+      if snake:get_X(1) > 1 and snake:get_Y(1) > 1 and snake:get_X(1) < Util.field_w and snake:get_Y(1) < Util.field_h then
+         for i, segment in ipairs(snake:get_segments()) do
+            if i ~= 1 then
+               if segment.x == snake:get_X(1) and segment.y == snake:get_Y(1) then
+                  die()
+               end
+            end
+         end
+         move_snake()
+      else
+         die()
+      end
+      if snake:get_X(1) == fruit:get_X() and snake:get_Y(1) == fruit:get_Y() then
+         snake:add_segment()
+         apply_effect(fruit)
+         fruit = valid_fruit(snake, reset_fruit(fruit))
+         if not Util.control_vars.is_mute then
+            sfx.ponto:play()
+         end
+      end
+   elseif Util.current_screen == Util.screens.on_multiplayer_game then
+      -- TODO
    end
 end
 

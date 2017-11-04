@@ -45,9 +45,19 @@ Util.field_w, Util.field_h = math.floor(Util.w/Util.sqr_size), math.floor((Util.
 Util.control_vars = {
    debug = false,
    is_mute = false,
-   on_pause = false,
-   in_game = false,
-   on_death = false,
 }
+
+Util.screens = {
+   on_main = 1,
+   on_pause = 0,
+   on_death = -1,
+   on_singleplayer_game = 2,
+   on_multiplayer_setup = 3,
+   on_multiplayer_game = 4,
+   on_options = 5,
+   on_rankings = 6,
+}
+
+Util.current_screen = Util.screens.on_main
 
 return Util
