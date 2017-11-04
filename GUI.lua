@@ -161,15 +161,16 @@ function GUI.pause_menu(w, h)
 end
 
 function GUI.run(snake, field)
+   local score = (#snake:get_segments()-Util.initial_size)*100
    if Util.current_screen == Util.screens.on_main then
       return GUI.draw_main_menu()
    elseif Util.current_screen == Util.screens.on_pause then
       return GUI.pause_menu:draw(GUI.w, GUI.h)
    elseif Util.current_screen == Util.screens.on_death then
-      GUI.create_death_menu(GUI.w, GUI.h, #snake:get_segments()-Util.initial_size)
+      GUI.create_death_menu(GUI.w, GUI.h, score)
       return GUI.draw_death_menu(GUI.w, GUI.h)
    elseif Util.current_screen == Util.screens.on_singleplayer_game then
-      GUI.draw_HUD(0, 0, #snake:get_segments()-Util.initial_size)
+      GUI.draw_HUD(0, 0, score)
       GUI.draw_field(0, Util.hud_height, GUI.w, GUI.h-Util.hud_height, field, Util.sqr_size)
       return actions.PASSTHROUGH
    elseif Util.current_screen == Util.screens.on_multiplayer_setup then
