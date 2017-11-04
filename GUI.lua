@@ -65,16 +65,17 @@ function GUI.create_main_menu(x, y, w, h)
    for _, item in ipairs(buttons) do
       item[3] = {
          label_color = {
+            default = GUI.main_color,
             focused = colors.BLACK,
          },
          fill_colors = {
             default = colors.BLACK,
-            focused = colors.WHITE,
+            focused = GUI.main_color,
             disabled = colors.BLACK,
          },
          outline_colors = {
-            default = colors.WHITE,
-            focused = colors.WHITE,
+            default = GUI.main_color,
+            focused = GUI.main_color,
             disabled = colors.BLACK,
          },
       }
@@ -86,8 +87,9 @@ end
 
 function GUI.create_death_menu(w, h, score)
    local death_menu = menu.new_menu(0, 0, w, h)
-   death_menu:add_label('dead', "Game over")
-   death_menu:add_label('score', "Score: "..score)
+   local properties = {color = GUI.main_color}
+   death_menu:add_label('dead', "Game over", properties)
+   death_menu:add_label('score', "Score: "..score, properties)
    GUI.death_menu = death_menu
    return GUI.death_menu
 end
@@ -101,7 +103,7 @@ end
 
 function GUI.draw_main_menu()
    GUI.main_menu:run()
-   love.graphics.setColor(unpack(colors.WHITE))
+   love.graphics.setColor(unpack(GUI.main_color))
    local title = love.graphics.newText(love.graphics.newFont(100), "Snakey")
    local title_w = title:getWidth()
    local title_h = title:getHeight()
