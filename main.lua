@@ -4,19 +4,6 @@ local Util = require 'Util'
 local Snake = require 'Snake'
 local Fruit = require 'Fruit'
 
-local w, h = love.window.getMode()
-local sqr_size = 20
-local initial_size = 4
-local v = 0.05
-
-local control_vars = {
-   debug = false,
-   is_mute = false,
-   on_pause = false,
-   in_game = false,
-   on_death = false,
-}
-
 local field = {}
 local snake, fruit, sfx
 
@@ -37,8 +24,8 @@ local function valid_fruit(snake, fruit)
       local reset = false
       while snake:get_X(i) == fruit:get_X() and snake:get_Y(i) == fruit:get_Y() do
          reset = true
-         fruit:set_X(love.math.random(2, (w/sqr_size)-1))
-         fruit:set_Y(love.math.random(2, (h/sqr_size)-1))
+         fruit:set_X(love.math.random(2, (Util.field_w)-1))
+         fruit:set_Y(love.math.random(2, (Util.field_h)-1))
       end
       if reset then
          i = 1
@@ -49,23 +36,24 @@ end
 
 local function start(first_time)
 
-   GUI.create_main_menu(0, 200, w, h-200)
-   GUI.w, GUI.h = w, h
+   GUI.create_main_menu(0, 200, Util.w, Util.h-200)
+   GUI.w, GUI.h = Util.w, Util.h
    
    -- sets field
-   for i=1, w/sqr_size do
+   for i=1, Util.field_w do
       field[i] = {}
-      for j=1, h/sqr_size do
-         field[i][j] = i == 1 or j == 1 or i == w/sqr_size or j == h/sqr_size
+      for j=1, Util.field_h do
+         field[i][j] = i == 1 or j == 1 or i == Util.field_w or j == Util.field_h
       end
+      print(Util.field_w, Util.field_h)
    end
 
    -- sets snake and fruit
-   snake = Snake.new(w/sqr_size/2, h/sqr_size/2)
-   fruit = Fruit.new(love.math.random(2, (w/sqr_size)-1), love.math.random(2, (h/sqr_size)-1))
+   snake = Snake.new(math.ceil(Util.field_w/2), math.ceil(Util.field_h/2))
+   fruit = Fruit.new(love.math.random(2, (Util.field_w)-1), love.math.random(2, (Util.field_h)-1))
    fruit = valid_fruit(snake, fruit)
 
-   for i=1, initial_size-1 do
+   for i=1, Util.initial_size-1 do
       snake:add_segment()
    end
    for _, segment in ipairs(snake:get_segments()) do
@@ -73,13 +61,13 @@ local function start(first_time)
    end
 
    -- plays start tune
-   if not control_vars.is_mute and not first_time then
+   if not Util.control_vars.is_mute and not first_time then
       sfx.inicio:play()
    end
 
 end
 
-local function move_snake(v)
+local function move_snake()
    local function follow_segment(index, direction)
       if index <= #snake:get_segments() then
          local segment = snake:get_segments()[index]
@@ -100,7 +88,7 @@ local function move_snake(v)
       end
    end
    follow_segment(1, snake:get_direction(1))
-   love.timer.sleep(v)
+   love.timer.sleep(Util.velocity)
 end
 
 local function apply_effect(fruit)
@@ -129,15 +117,15 @@ local function apply_effect(fruit)
 end
 
 local function reset_fruit(fruit)
-   fruit:set_X(love.math.random(2, (w/sqr_size)-1))
-   fruit:set_Y(love.math.random(2, (h/sqr_size)-1))
+   fruit:set_X(love.math.random(2, (Util.field_w)-1))
+   fruit:set_Y(love.math.random(2, (Util.field_h)-1))
    return fruit
 end
 
 local function die()
-   control_vars.on_death = true
-   control_vars.in_game = false
-   if not control_vars.is_mute then
+   Util.control_vars.on_death = true
+   Util.control_vars.in_game = false
+   if not Util.control_vars.is_mute then
       sfx.toque:play()
    end
 end
@@ -159,19 +147,19 @@ function love.keypressed(key)
 --         v = v - 0.05
 --      end
 --   end
---   if key == ('space') then
---      if control_vars.in_game then
---         control_vars.on_pause = not control_vars.on_pause
---      else
---         if control_vars.on_death then
---            control_vars.on_death = not control_vars.on_death
---         end
---         control_vars.in_game = not control_vars.on_death
---         start(false)
---      end
---   end
+   if key == ('space') then
+      if Util.control_vars.in_game then
+         Util.control_vars.on_pause = not Util.control_vars.on_pause
+      else
+         if Util.control_vars.on_death then
+            Util.control_vars.on_death = not Util.control_vars.on_death
+         end
+         Util.control_vars.in_game = not Util.control_vars.on_death
+         start(false)
+      end
+   end
 --   if key == ('\'') then
---      control_vars.debug = not control_vars.debug
+--      Util.control_vars.debug = not Util.control_vars.debug
 --   end
 --   if key == ('up') or key == ('down') or key == ('left') or key == ('right') or key == ('w') or key == ('s') or key == ('a') or key == ('d') then
 --      if key == ('w') then
@@ -189,10 +177,10 @@ function love.keypressed(key)
 --      snake:set_direction(1, key)
 --   end
 --   if key == ('escape') then
---      if control_vars.in_game then
---         control_vars.in_game = false
---         control_vars.on_pause = false
---         control_vars.on_death = false
+--      if Util.control_vars.in_game then
+--         Util.control_vars.in_game = false
+--         Util.control_vars.on_pause = false
+--         Util.control_vars.on_death = false
 --      else
 --         love.window.close()
 --      end
@@ -200,15 +188,15 @@ function love.keypressed(key)
 end
 
 function love.update(dt)
-   if control_vars.in_game then
-      if not control_vars.on_pause and not control_vars.on_death then
-         for i=1, w/sqr_size do
-            for j=1, h/sqr_size do
-               field[i][j] = i == 1 or j == 1 or i == w/sqr_size or j == h/sqr_size
+   if Util.control_vars.in_game then
+      if not Util.control_vars.on_pause and not Util.control_vars.on_death then
+         for i=1, Util.field_w do
+            for j=1, Util.field_h do
+               field[i][j] = i == 1 or j == 1 or i == Util.field_w or j == Util.field_h
             end
          end
          field[fruit:get_X()][fruit:get_Y()] = true
-         if snake:get_X(1) > 1 and snake:get_Y(1) > 1 and snake:get_X(1) < w/sqr_size and snake:get_Y(1) < h/sqr_size then
+         if snake:get_X(1) > 1 and snake:get_Y(1) > 1 and snake:get_X(1) < Util.field_w and snake:get_Y(1) < Util.field_h then
             for i, segment in ipairs(snake:get_segments()) do
                if i ~= 1 then
                   if segment.x == snake:get_X(1) and segment.y == snake:get_Y(1) then
@@ -216,7 +204,7 @@ function love.update(dt)
                   end
                end
             end
-            move_snake(v)
+            move_snake()
          else
             die()
          end
@@ -224,7 +212,7 @@ function love.update(dt)
             snake:add_segment()
             apply_effect(fruit)
             fruit = valid_fruit(snake, reset_fruit(fruit))
-            if not control_vars.is_mute then
+            if not Util.control_vars.is_mute then
                sfx.ponto:play()
             end
          end
@@ -233,5 +221,5 @@ function love.update(dt)
 end
 
 function love.draw()
-   current_screen = GUI.run(control_vars, snake, initial_size, field, sqr_size)
+   current_screen = GUI.run(snake, field)
 end

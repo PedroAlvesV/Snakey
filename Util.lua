@@ -34,4 +34,20 @@ Util.keys = {
    RIGHT = 'right',
 }
 
+Util.w, Util.h = love.window.getMode()
+Util.sqr_size = 20
+Util.hud_height = 40
+Util.initial_size = 4
+Util.velocity = 0.05
+
+Util.field_w, Util.field_h = math.floor(Util.w/Util.sqr_size), math.floor((Util.h-Util.hud_height)/Util.sqr_size)
+
+Util.control_vars = {
+   debug = false,
+   is_mute = false,
+   on_pause = false,
+   in_game = false,
+   on_death = false,
+}
+
 return Util

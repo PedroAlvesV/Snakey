@@ -9,8 +9,6 @@ local actions = Util.actions
 
 GUI.main_color = colors.WHITE
 
-GUI.hud_height = 50
-
 function GUI.set_main_color(color)
    for i in ipairs(color) do
       if color[i] < 0 or color[i] > 255 then
@@ -33,18 +31,16 @@ function GUI.random_color()
    return colors[keyset[love.math.random(#keyset)]]
 end
 
-function GUI.draw_HUD(w, h, snake, hud_height)
+function GUI.draw_HUD(w, h, snake)
    -- TODO
 end
 
-function GUI.draw_field(x, y, w, h, field, sqr_size)
-   print(x,y,w,h,sqr_size)
-   for i=1, w/sqr_size do
-      for j=1, h/(y-sqr_size) do
+function GUI.draw_field(x, y, w, h, field)
+   for i=1, Util.field_w do
+      for j=1, Util.field_h do
          if field[i][j] then
-            --love.graphics.setColor(unpack(GUI.random_color()))
-            local x, y = i*sqr_size-sqr_size, j*sqr_size-sqr_size
-            love.graphics.rectangle("fill", x, y, sqr_size, sqr_size)
+            love.graphics.setColor(unpack(GUI.random_color()))
+            love.graphics.rectangle("fill", (i*Util.sqr_size-Util.sqr_size)+x, (j*Util.sqr_size-Util.sqr_size)+y, Util.sqr_size, Util.sqr_size)
          end
       end
    end
@@ -154,22 +150,22 @@ function GUI.pause_menu(w, h)
    love.graphics.print("Press Space to Resume", w/2-120, h/2+59)
 end
 
-function GUI.run(control_vars, snake, initial_size, field, sqr_size)
-   if not control_vars.in_game and not control_vars.on_death then
+function GUI.run(snake, field)
+   if not Util.control_vars.in_game and not Util.control_vars.on_death then
       return GUI.draw_main_menu()
    else
-      if not control_vars.on_death then 
-         GUI.draw_HUD(0, 0, GUI.w, GUI.h, #snake:get_segments()-initial_size, GUI.hud_height) -- TODO
-         GUI.draw_field(0, GUI.hud_height, GUI.w, GUI.h-GUI.hud_height, field, sqr_size) -- this one is handled entirely in GUI
-         if control_vars.on_pause then
+      if not Util.control_vars.on_death then 
+         GUI.draw_HUD(0, 0, GUI.w, GUI.h, #snake:get_segments()-Util.initial_size, Util.hud_height) -- TODO
+         GUI.draw_field(0, Util.hud_height, GUI.w, GUI.h-Util.hud_height, field, Util.sqr_size) -- this one is handled entirely in GUI
+         if Util.control_vars.on_pause then
             return GUI.pause_menu:draw(GUI.w, GUI.h) -- must merely draw menu created on the top of the code
          end
-         if control_vars.is_mute then
+         if Util.control_vars.is_mute then
             love.graphics.setFont(love.graphics.newFont(40))
             love.graphics.print("MUTE", GUI.w-117, 0)
          end
       else
-         GUI.create_death_menu(GUI.w, GUI.h, #snake:get_segments()-initial_size)
+         GUI.create_death_menu(GUI.w, GUI.h, #snake:get_segments()-Util.initial_size)
          return GUI.draw_death_menu(GUI.w, GUI.h) -- must merely draw menu created on the top of the code
       end
    end
