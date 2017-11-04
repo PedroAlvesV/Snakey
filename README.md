@@ -2,13 +2,14 @@
 
 Snakey is a remake of the classic [_Snake_](https://en.wikipedia.org/wiki/Snake_(video_game)) with new features and different gameplay styles.
 
-Currently, it is still in early development, featuring only the basics of the original game.
+Currently, it is in constant development, so, until the first release, don't expect it to work properly.
 
 ## Todo
 
-* Add HUD
-* Add menus
-* Add borderless option
+* Fix menus actions handling
+* Create missing menu widgets
+* Add missing menus
+* Add borderless field option
 * Add special fruits
 * Add local ranking
 * Add better sfx
