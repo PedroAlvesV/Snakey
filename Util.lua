@@ -32,6 +32,13 @@ Util.keys = {
    UP = 'up',
    LEFT = 'left',
    RIGHT = 'right',
+   S = 's',
+   W = 'w',
+   A = 'a',
+   D = 'd',
+   M = 'm',
+   KP_MINUS = 'kp-',
+   KP_PLUS = 'kp+',
 }
 
 Util.w, Util.h = love.window.getMode()

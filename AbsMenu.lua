@@ -56,6 +56,10 @@ function Label:draw(x, y)
    love.graphics.draw(text, x, y, nil, nil, nil, text:getWidth()/2, text:getHeight()/2)
 end
 
+function Label:process_key(key)
+   return actions.PASSTHROUGH
+end
+
 function Button.new(label, properties, callback)
    properties = properties or {}
    properties.label_color = properties.label_color or {}
@@ -122,7 +126,6 @@ function Button:draw(x, y, focus)
 end
 
 function Button:process_key(key)
-   -- MUST TEST
    if self.focusable then
       if key == keys.ENTER or key == keys.SPACE then
          return run_callback(self, self.label)
@@ -1031,9 +1034,9 @@ function Menu:process_key(key)
       return motion
    end
    if motion == actions.PREVIOUS then
-      move_focus(-1)
+      return move_focus(-1)
    elseif motion == actions.NEXT then
-      move_focus(1)
+      return move_focus(1)
    end
 end
 
@@ -1045,6 +1048,9 @@ function Menu:run()
    end
    for i, item in ipairs(self.widgets) do
       item.widget:draw(self.x + self.w/2, self.y + item.y, i == self.focus)
+   end
+   function love.keypressed(key)
+      return self:process_key(key)
    end
 end
 

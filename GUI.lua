@@ -103,7 +103,7 @@ function GUI.create_pause_menu(w, h)
 end
 
 function GUI.draw_main_menu()
-   GUI.main_menu:run()
+   local action = GUI.main_menu:run()
    love.graphics.setColor(unpack(GUI.main_color))
    local title = love.graphics.newText(love.graphics.newFont(100), "Snakey")
    local title_w = title:getWidth()
@@ -120,11 +120,11 @@ function GUI.draw_main_menu()
    love.graphics.rectangle("fill", box_x, box_y, box_w, box_h)
    love.graphics.setColor(unpack(GUI.main_color))
    love.graphics.draw(title, title_x, title_y, nil, nil, nil, title_w/2, title_h/2)
-   return GUI.main_menu
+   return action
 end
 
 function GUI.draw_death_menu(w, h)
-   GUI.death_menu:run()
+   local action = GUI.death_menu:run()
 --   love.graphics.rectangle("line", w/2-305, h/2-57, 620, 115)
 --   love.graphics.rectangle("line", w/2-305, h/2-57, 620, 115)
 --   love.graphics.setColor(unpack(colors.BLACK))
@@ -139,7 +139,7 @@ function GUI.draw_death_menu(w, h)
 --   love.graphics.print("Game Over", w/2-280, h/2-55)
 --   love.graphics.setFont(love.graphics.newFont(20))
 --   love.graphics.print("Score: "..score, w/2-48, h/2+59)
-   return GUI.death_menu
+   return action
 end
 
 function GUI.pause_menu(w, h)
@@ -171,6 +171,7 @@ function GUI.run(snake, field)
    elseif Util.current_screen == Util.screens.on_singleplayer_game then
       GUI.draw_HUD(0, 0, #snake:get_segments()-Util.initial_size)
       GUI.draw_field(0, Util.hud_height, GUI.w, GUI.h-Util.hud_height, field, Util.sqr_size)
+      return actions.PASSTHROUGH
    elseif Util.current_screen == Util.screens.on_multiplayer_setup then
       -- TODO
    elseif Util.current_screen == Util.screens.on_multiplayer_game then

@@ -7,6 +7,8 @@ local Fruit = require 'Fruit'
 local field = {}
 local snake, fruit, sfx
 
+local keys = Util.keys
+
 --GUI.set_main_color(GUI.colors.WHITE)
 
 love.window.setTitle("Snakey")
@@ -130,58 +132,29 @@ function love.load()
    start(true)
 end
 
-function love.keypressed(key)
-   local action = current_screen:process_key(key)
-   -- TODO
---   if key == ('m') then
---      control_vars.is_mute = not control_vars.is_mute
---   end
---   if key == ('kp-') then
---      v = v + 0.05
---   end
---   if key == ('kp+') then
---      if v > 0 then
---         v = v - 0.05
---      end
---   end
---   if key == ('space') then
---      if Util.control_vars.in_game then
---         Util.control_vars.on_pause = not Util.control_vars.on_pause
---      else
---         if Util.control_vars.on_death then
---            Util.control_vars.on_death = not Util.control_vars.on_death
---         end
---         Util.control_vars.in_game = not Util.control_vars.on_death
---         start(false)
---      end
---   end
---   if key == ('\'') then
---      Util.control_vars.debug = not Util.control_vars.debug
---   end
---   if key == ('up') or key == ('down') or key == ('left') or key == ('right') or key == ('w') or key == ('s') or key == ('a') or key == ('d') then
---      if key == ('w') then
---         key = 'up'
---      end
---      if key == ('s') then
---         key = 'down'
---      end
---      if key == ('a') then
---         key = 'left'
---      end
---      if key == ('d') then
---         key = 'right'
---      end
---      snake:set_direction(1, key)
---   end
---   if key == ('escape') then
---      if Util.control_vars.in_game then
---         Util.control_vars.in_game = false
---         Util.control_vars.on_pause = false
---         Util.control_vars.on_death = false
---      else
---         love.window.close()
---      end
---   end
+local function handle_signal(key)
+   if Util.current_screen == Util.screens.on_singleplayer_game then
+      if key == keys.DOWN or key == keys.S or
+      key == keys.UP or key == keys.W or
+      key == keys.LEFT or key == keys.A or
+      key == keys.RIGHT or key == keys.D then
+         snake:set_direction(1, key)
+      elseif key == keys.M then
+         Util.control_vars.is_mute = not Util.control_vars.is_mute
+      elseif key == keys.KP_MINUS then
+         Util.velocity = Util.velocity + 0.05
+      elseif key == keys.KP_PLUS then
+         if Util.velocity > 0 then
+            Util.velocity = Util.velocity - 0.05
+         end
+      elseif key == keys.SPACE then
+         Util.current_screen = Util.screens.on_pause
+      elseif key == keys.ESC then
+         Util.current_screen = Util.screens.on_death
+      end
+   elseif Util.current_screen == Util.screens.on_multiplayer_game then
+      -- TODO
+   end
 end
 
 function love.update(dt)
@@ -218,5 +191,14 @@ function love.update(dt)
 end
 
 function love.draw()
-   current_screen = GUI.run(snake, field)
+   local action, key = GUI.run(snake, field)
+   if Util.current_screen == Util.screens.on_singleplayer_game then
+      function love.keypressed(key)
+         if key then
+            handle_signal(key)
+         end
+      end
+   elseif Util.current_screen == Util.screens.on_multiplayer_game then
+      -- TODO
+   end
 end

@@ -6,7 +6,6 @@ Currently, it is in constant development, so, until the first release, don't exp
 
 ## Todo
 
-* Fix menus actions handling
 * Create missing menu widgets
 * Add missing menus
 * Add borderless field option
