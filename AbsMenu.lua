@@ -96,31 +96,19 @@ function Button.new(label, properties, callback)
 end
 
 function Button:draw(x, y, focus)
+   local color_set = 'default'
    if self.focusable then
       if focus then
-         love.graphics.setColor(unpack(self.fill_colors.focused))
-      else
-         love.graphics.setColor(unpack(self.fill_colors.default))
+         color_set = 'focused'
       end
-      love.graphics.rectangle("fill", x-self.width/2, y-self.height/2, self.width, self.height)
-      if focus then
-         love.graphics.setColor(unpack(self.outline_colors.focused))
-      else
-         love.graphics.setColor(unpack(self.outline_colors.default))
-      end
-      love.graphics.rectangle("line", x-self.width/2, y-self.height/2, self.width, self.height)
    else
-      love.graphics.setColor(unpack(self.fill_colors.disabled))
-      love.graphics.rectangle("fill", x-self.width/2, y-self.height/2, self.width, self.height)
-      love.graphics.setColor(unpack(self.outline_colors.disabled))
-      love.graphics.rectangle("line", x-self.width/2, y-self.height/2, self.width, self.height)
-      love.graphics.setColor(unpack(self.label_color.disabled))
+      color_set = 'disabled'
    end
-   if focus then
-      love.graphics.setColor(unpack(self.label_color.focused))
-   elseif self.focusable then
-      love.graphics.setColor(unpack(self.label_color.default))
-   end
+   love.graphics.setColor(unpack(self.fill_colors[color_set]))
+   love.graphics.rectangle("fill", x-self.width/2, y-self.height/2, self.width, self.height)
+   love.graphics.setColor(unpack(self.outline_colors[color_set]))
+   love.graphics.rectangle("line", x-self.width/2, y-self.height/2, self.width, self.height)
+   love.graphics.setColor(unpack(self.label_color[color_set]))
    love.graphics.draw(self.label, x, y, nil, nil, nil, self.label:getWidth()/2, self.label:getHeight()/2)
 end
 
@@ -518,9 +506,9 @@ function CheckBox:draw(x, y, focus)
       color_set = 'disabled'
    end
    love.graphics.setColor(unpack(self.fill_box_colors[color_set]))
-   love.graphics.rectangle("fill", self.box.x-total_width/2, self.box.y, self.box.size, self.box.size)
+   love.graphics.rectangle("fill", self.box.x - total_width/2, self.box.y, self.box.size, self.box.size)
    love.graphics.setColor(unpack(self.outline_box_colors[color_set]))
-   love.graphics.rectangle("line", self.box.x-total_width/2, self.box.y, self.box.size, self.box.size)
+   love.graphics.rectangle("line", self.box.x - total_width/2, self.box.y, self.box.size, self.box.size)
    if self.state then
       love.graphics.setColor(unpack(self.cross_box_colors[color_set]))
       love.graphics.line(self.box.x - total_width/2 + self.box.size/10, self.box.y + self.box.size/10,
@@ -529,7 +517,7 @@ function CheckBox:draw(x, y, focus)
          self.box.x - total_width/2 + self.box.size/10, self.box.y + self.box.size - self.box.size/10)
    end
    love.graphics.setColor(unpack(self.text_colors[color_set]))
-   love.graphics.draw(self.text, x-total_width/2, y)
+   love.graphics.draw(self.text, x - total_width/2, y)
 end
 
 function CheckBox:process_key(key)
