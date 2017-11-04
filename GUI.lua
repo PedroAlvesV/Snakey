@@ -31,15 +31,22 @@ function GUI.random_color()
    return colors[keyset[love.math.random(#keyset)]]
 end
 
-function GUI.draw_HUD(w, h, snake)
-   -- TODO
+function GUI.draw_HUD(x, y, score)
+   local text_h = Util.hud_height*0.95
+   local score_text = love.graphics.newText(love.graphics.newFont(text_h), "Score: "..score)
+   love.graphics.setColor(GUI.main_color)
+   if Util.control_vars.is_mute then
+      local mute_text = love.graphics.newText(love.graphics.newFont(text_h), "MUTE")
+      love.graphics.draw(mute_text, Util.w-mute_text:getWidth(), y)
+   end
+   love.graphics.draw(score_text, x, y)
 end
 
 function GUI.draw_field(x, y, w, h, field)
    for i=1, Util.field_w do
       for j=1, Util.field_h do
          if field[i][j] then
-            love.graphics.setColor(unpack(GUI.random_color()))
+            --love.graphics.setColor(unpack(GUI.random_color()))
             love.graphics.rectangle("fill", (i*Util.sqr_size-Util.sqr_size)+x, (j*Util.sqr_size-Util.sqr_size)+y, Util.sqr_size, Util.sqr_size)
          end
       end
@@ -155,14 +162,10 @@ function GUI.run(snake, field)
       return GUI.draw_main_menu()
    else
       if not Util.control_vars.on_death then 
-         GUI.draw_HUD(0, 0, GUI.w, GUI.h, #snake:get_segments()-Util.initial_size, Util.hud_height) -- TODO
-         GUI.draw_field(0, Util.hud_height, GUI.w, GUI.h-Util.hud_height, field, Util.sqr_size) -- this one is handled entirely in GUI
+         GUI.draw_HUD(0, 0, #snake:get_segments()-Util.initial_size)
+         GUI.draw_field(0, Util.hud_height, GUI.w, GUI.h-Util.hud_height, field, Util.sqr_size)
          if Util.control_vars.on_pause then
             return GUI.pause_menu:draw(GUI.w, GUI.h) -- must merely draw menu created on the top of the code
-         end
-         if Util.control_vars.is_mute then
-            love.graphics.setFont(love.graphics.newFont(40))
-            love.graphics.print("MUTE", GUI.w-117, 0)
          end
       else
          GUI.create_death_menu(GUI.w, GUI.h, #snake:get_segments()-Util.initial_size)
