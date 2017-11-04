@@ -47,6 +47,12 @@ Util.hud_height = 40
 Util.initial_size = 4
 Util.velocity = 0.05
 
+Util.sfx = {
+   ponto = love.audio.newSource("/sfx/ponto.ogg", "static"),
+   toque = love.audio.newSource("/sfx/toque.ogg", "static"),
+   inicio = love.audio.newSource("/sfx/inicio.ogg", "static"),
+}
+
 Util.field_w, Util.field_h = math.floor(Util.w/Util.sqr_size), math.floor((Util.h-Util.hud_height)/Util.sqr_size)
 
 Util.control_vars = {

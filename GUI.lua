@@ -54,7 +54,7 @@ function GUI.draw_field(x, y, w, h, field)
    end
 end
 
-function GUI.create_main_menu(x, y, w, h)
+function GUI.create_main_menu(x, y, w, h, reset_game)
    local main_menu = menu.new_menu(x, y, w, h)
    local colors_props = {
       label_color = {
@@ -72,8 +72,12 @@ function GUI.create_main_menu(x, y, w, h)
          disabled = colors.BLACK,
       },
    }
+   local function singleplr_func()
+      reset_game()
+      Util.current_screen = Util.screens.on_singleplayer_game
+   end
    local buttons = {
-      {'b_singleplr', "Single Player", colors_props, function() Util.current_screen = Util.screens.on_singleplayer_game end},
+      {'b_singleplr', "Single Player", colors_props, singleplr_func},
       {'b_multip', "Multiplayer", colors_props},
       {'b_opts', "Options", colors_props},
       {'b_ranks', "Rankings", colors_props},
@@ -193,30 +197,6 @@ function GUI.draw_pause_menu()
    love.graphics.setColor(unpack(GUI.main_color))
    love.graphics.draw(title, title_x, title_y, nil, nil, nil, title_w/2, title_h/2)
    return action
-end
-
-function GUI.run(snake, field)
-   local score = (#snake:get_segments()-Util.initial_size)*100
-   if Util.current_screen == Util.screens.on_main then
-      return GUI.draw_main_menu()
-   elseif Util.current_screen == Util.screens.on_pause then
-      return GUI.draw_pause_menu()
-   elseif Util.current_screen == Util.screens.on_death then
-      GUI.create_death_menu(GUI.w, GUI.h, score)
-      return GUI.draw_death_menu(GUI.w, GUI.h)
-   elseif Util.current_screen == Util.screens.on_singleplayer_game then
-      GUI.draw_HUD(0, 0, score)
-      GUI.draw_field(0, Util.hud_height, GUI.w, GUI.h-Util.hud_height, field, Util.sqr_size)
-      return actions.PASSTHROUGH
-   elseif Util.current_screen == Util.screens.on_multiplayer_setup then
-      -- TODO
-   elseif Util.current_screen == Util.screens.on_multiplayer_game then
-      -- TODO
-   elseif Util.current_screen == Util.screens.on_options then
-      -- TODO
-   elseif Util.current_screen == Util.screens.on_rankings then
-      -- TODO
-   end
 end
 
 return GUI
