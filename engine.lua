@@ -12,7 +12,7 @@ local sfx = Util.sfx
 local keys = Util.keys
 local actions = Util.actions
 
-local function handle_signal(key)
+local function handle_playing(key)
    if Util.current_screen == Util.screens.on_singleplayer_game then
       if key == keys.DOWN or key == keys.S or
       key == keys.UP or key == keys.W or
@@ -27,13 +27,19 @@ local function handle_signal(key)
          if Util.velocity > 0 then
             Util.velocity = Util.velocity - 0.05
          end
-      elseif key == keys.SPACE then
+      elseif key == keys.SPACE or key == keys.ESC then
          Util.current_screen = Util.screens.on_pause
-      elseif key == keys.ESC then
-         Util.current_screen = Util.screens.on_death
       end
    elseif Util.current_screen == Util.screens.on_multiplayer_game then
       -- TODO
+   end
+end
+
+local function handle_exception(key)
+   function love.keypressed(key)
+      if key == keys.SPACE or key == keys.ESC or key == keys.ENTER then
+         Util.current_screen = Util.screens.on_main
+      end
    end
 end
 
@@ -53,9 +59,9 @@ local function valid_fruit(snake, fruit)
 end
 
 local function reset_game(gamemode)
-   
+
    GUI.create_pause_menu(0, 200, Util.w, Util.h-200)
-   
+
    -- sets field
    for i=1, Util.field_w do
       field[i] = {}
@@ -213,11 +219,13 @@ function love.draw()
    if Util.current_screen == Util.screens.on_singleplayer_game then
       function love.keypressed(key)
          if key then
-            handle_signal(key)
+            handle_playing(key)
          end
       end
    elseif Util.current_screen == Util.screens.on_multiplayer_game then
       -- TODO
+   elseif not action and Util.current_screen == Util.screens.on_death then
+      handle_exception()
    end
 end
 

@@ -119,7 +119,7 @@ function GUI.create_pause_menu(x, y, w, h)
    }
    local buttons = {
       {'b_resume', "Resume", colors_props, function() Util.current_screen = Util.screens.on_singleplayer_game end},
-      {'b_quit', "Quit", colors_props, function() Util.current_screen = Util.screens.on_main end},
+      {'b_quit', "Quit", colors_props, function() Util.current_screen = Util.screens.on_death end},
    }
    for _, item in ipairs(buttons) do
       pause_menu:add_button(unpack(item))
