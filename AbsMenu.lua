@@ -10,7 +10,7 @@ local TextInput = {}
 local TextBox = {}
 local CheckBox = {}
 local Slider = {}
-local Selector = {} -- like Resolution < 1366x768 >
+local Selector = {}
 
 local colors = Util.colors
 local default_bg_color = colors.BLACK
@@ -714,7 +714,6 @@ function Menu:set_enabled(id, bool, index)
 end
 
 function Menu:delete_widget(id)
-   -- MUST TEST
    for i, item in ipairs(self.widgets) do
       if item.id == id then
          table.remove(self.widgets, i)
@@ -797,7 +796,7 @@ function Menu:get_value(id, index)
          elseif item.type == 'SELECTOR' then
             local list = item.widget.list
             for i, button in ipairs(list) do
-               if i == item.widget.marked then
+               if i == item.widget.selected then
                   return button
                end
             end
@@ -814,32 +813,17 @@ function Menu:set_focus(widget_n)
    return false
 end
 
-local function iter_screen_items(screen)
+function Menu:get_data()
    -- MUST EDIT
    local data = {}
-   for _, item in ipairs(screen.widgets) do
-      if item.id ~= ASSIST_BUTTONS and item.id ~= NAV_BUTTONS then
-         data[item.id] = {}
-         if item.type == 'BUTTON_BOX' or item.type == 'CHECKLIST' then
-            if item.type == 'BUTTON_BOX' then
-               for j=1, #item.widget.buttons do
-                  data[item.id][j] = screen:get_value(item.id, j)
-               end
-            else
-               for j=1, #item.widget.checklist do
-                  data[item.id][j] = {label = nil, state = nil}
-                  data[item.id][j].label, data[item.id][j].state = screen:get_value(item.id, j)
-               end
-            end
-         else
-            local value = screen:get_value(item.id)
-            if item.type == 'CHECKBOX' then
-               local _, v = screen:get_value(item.id)
-               value = v
-            end
-            data[item.id] = value
-         end
+   for _, item in ipairs(self.widgets) do
+      data[item.id] = {}
+      local value = self:get_value(item.id)
+      if item.type == 'CHECKBOX' then
+         local _, v = self:get_value(item.id)
+         value = v
       end
+      data[item.id] = value
    end
    return data
 end
