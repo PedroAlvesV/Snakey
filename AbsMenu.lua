@@ -510,10 +510,10 @@ function CheckBox:draw(x, y, focus)
    love.graphics.rectangle("line", self.box.x - total_width/2, self.box.y, self.box.size, self.box.size)
    if self.state then
       love.graphics.setColor(unpack(self.cross_box_colors[color_set]))
-      love.graphics.line(self.box.x - total_width/2 + self.box.size/10, self.box.y + self.box.size/10,
-         self.box.x + self.box.size - total_width/2 - self.box.size/10, self.box.y + self.box.size - self.box.size/10)
-      love.graphics.line(self.box.x + self.box.size - total_width/2 - self.box.size/10, self.box.y + self.box.size/10,
-         self.box.x - total_width/2 + self.box.size/10, self.box.y + self.box.size - self.box.size/10)
+      love.graphics.line(self.box.x - total_width/2 + self.box.size/5, self.box.y + self.box.size/5,
+         self.box.x + self.box.size - total_width/2 - self.box.size/5, self.box.y + self.box.size - self.box.size/5)
+      love.graphics.line(self.box.x + self.box.size - total_width/2 - self.box.size/5, self.box.y + self.box.size/5,
+         self.box.x - total_width/2 + self.box.size/5, self.box.y + self.box.size - self.box.size/5)
    end
    love.graphics.setColor(unpack(self.text_colors[color_set]))
    love.graphics.draw(self.text, x - total_width/2, y)
