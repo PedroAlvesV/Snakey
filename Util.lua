@@ -60,6 +60,27 @@ Util.control_vars = {
    is_mute = false,
 }
 
+Util.global = {
+   main_color = Util.colors.WHITE,
+   resolution_w = Util.w,
+   resolution_h = Util.h,
+   fullscreen = false,
+}
+
+function Util.set_main_color(color)
+   for i in ipairs(color) do
+      if color[i] < 0 or color[i] > 255 or i > 4 then
+         return false
+      end
+   end
+   Util.global.main_color = color
+   return true
+end
+
+function Util.get_main_color()
+   return Util.global.main_color
+end
+
 Util.screens = {
    on_main = 1,
    on_pause = 0,

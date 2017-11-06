@@ -11,6 +11,7 @@ local snake, fruit
 local sfx = Util.sfx
 local keys = Util.keys
 local actions = Util.actions
+local global = Util.global
 
 local function handle_playing(key)
    if Util.current_screen == Util.screens.on_singleplayer_game then
@@ -60,7 +61,7 @@ end
 
 local function reset_game(gamemode)
 
-   GUI.create_pause_menu(Util.w, Util.h)
+   GUI.create_pause_menu(global.resolution_w, global.resolution_h)
 
    -- sets field
    for i=1, Util.field_w do
@@ -209,9 +210,9 @@ local function run(snake, field)
 end
 
 function engine.start()
-   GUI.create_main_menu(0, 200, Util.w, Util.h-200, reset_game)
-   GUI.create_options_menu(Util.w, Util.h)
-   GUI.w, GUI.h = Util.w, Util.h
+   GUI.create_main_menu(0, 200, global.resolution_w, global.resolution_h-200, reset_game)
+   GUI.create_options_menu(global.resolution_w, global.resolution_h)
+   GUI.w, GUI.h = global.resolution_w, global.resolution_h
    reset_game()
 end
 
