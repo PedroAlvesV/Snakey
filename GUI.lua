@@ -94,8 +94,9 @@ function GUI.create_main_menu(x, y, w, h, reset_game)
    return GUI.main_menu
 end
 
-function GUI.create_pause_menu(x, y, w, h)
-   local pause_menu = menu.new_menu(x, y, w, h)
+function GUI.create_pause_menu(w, h)
+   local pause_menu = menu.new_menu(0, 0, w, h)
+   pause_menu:add_label('title', "Pause", {font = love.graphics.newFont(100), color = GUI.main_color, underline = true})
    local colors_props = {
       label_color = {
          default = GUI.main_color,
@@ -119,7 +120,7 @@ function GUI.create_pause_menu(x, y, w, h)
    for _, item in ipairs(buttons) do
       pause_menu:add_button(unpack(item))
    end
-   --pause_menu:add_selector('sel_test', "Selector", {'aaa', 'bbb', 'ccc'}, nil, function(self, index, selected) if index == 3 then GUI.main_color = colors.LBLUE else GUI.main_color = colors.WHITE end end)
+   pause_menu:set_focus(2)
    GUI.pause_menu = pause_menu
    return GUI.pause_menu
 end
@@ -207,18 +208,17 @@ function GUI.draw_pause_menu()
 --   love.graphics.setFont(love.graphics.newFont(20))
 --   love.graphics.print("Press Space to Resume", w/2-120, h/2+59)
    local action = GUI.pause_menu:run()
-   love.graphics.setColor(unpack(GUI.main_color))
-   local title = love.graphics.newText(love.graphics.newFont(100), "Pause")
-   local title_w = title:getWidth()
-   local title_h = title:getHeight()
-   local title_x = math.ceil(GUI.w/2)
-   local title_y = math.ceil(GUI.w/6)
-   local box_w = title_w+30
-   local box_h = title_h+20
-   local box_x = title_x - box_w/2
-   local box_y = title_y - box_h/2
-   love.graphics.setColor(unpack(GUI.main_color))
-   love.graphics.draw(title, title_x, title_y, nil, nil, nil, title_w/2, title_h/2)
+--   local title = love.graphics.newText(love.graphics.newFont(100), "Pause")
+--   local title_w = title:getWidth()
+--   local title_h = title:getHeight()
+--   local title_x = math.ceil(GUI.w/2)
+--   local title_y = math.ceil(GUI.w/6)
+--   local box_w = title_w+30
+--   local box_h = title_h+20
+--   local box_x = title_x - box_w/2
+--   local box_y = title_y - box_h/2
+--   love.graphics.setColor(unpack(GUI.main_color))
+--   love.graphics.draw(title, title_x, title_y, nil, nil, nil, title_w/2, title_h/2)
    return action
 end
 

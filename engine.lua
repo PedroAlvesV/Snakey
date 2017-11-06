@@ -60,7 +60,7 @@ end
 
 local function reset_game(gamemode)
 
-   GUI.create_pause_menu(0, 200, Util.w, Util.h-200)
+   GUI.create_pause_menu(Util.w, Util.h)
 
    -- sets field
    for i=1, Util.field_w do
