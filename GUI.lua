@@ -135,7 +135,7 @@ end
 
 function GUI.create_options_menu(w, h)
    local options_menu = menu.new_menu(0, 0, w, h)
-   local properties = {color = GUI.main_color}
+   local properties = {font = love.graphics.newFont(50), color = GUI.main_color, underline = true}
    options_menu:add_label('title', "Options", properties)
    local colors_list = {"White", "Red", "Orange", "Yellow", "Lime", "Green",
       "Cyan", "Light Blue", "Dark Blue", "Purple", "Magenta", "Pink"}

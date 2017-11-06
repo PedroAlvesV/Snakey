@@ -44,15 +44,23 @@ function Label.new(label, properties)
       label = label,
       color = properties.color or colors.WHITE,
       font = properties.font or love.graphics.newFont(20),
+      underline = properties.underline or false,
       focusable = false,
    }
+   self.text = love.graphics.newText(self.font, self.label)
    return setmetatable(self, { __index = Label })
 end
 
 function Label:draw(x, y)
    love.graphics.setColor(unpack(self.color))
-   local text = love.graphics.newText(self.font, self.label)
-   love.graphics.draw(text, x, y, nil, nil, nil, text:getWidth()/2, text:getHeight()/2)
+   if self.underline then
+      local oversize = 10
+      love.graphics.line(x - self.text:getWidth()/2 - oversize, y + self.text:getHeight()/2,
+         x + self.text:getWidth()/2 + oversize, y + self.text:getHeight()/2)
+      love.graphics.line(x - self.text:getWidth()/2 - oversize, y + self.text:getHeight()/2,
+         x + self.text:getWidth()/2 + oversize, y + self.text:getHeight()/2)
+   end
+   love.graphics.draw(self.text, x, y, nil, nil, nil, self.text:getWidth()/2, self.text:getHeight()/2)
 end
 
 function Label:process_key(key)
