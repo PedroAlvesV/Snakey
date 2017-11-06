@@ -492,7 +492,7 @@ function CheckBox:draw(x, y, focus)
    local total_width = self.box.size + self.gap + self.text:getWidth()
    self.box.x, self.box.y = x, y
    if self.box_align == 'right' then
-      self.box.x = self.box.x + self.text:getWidth()
+      self.box.x = self.box.x + self.text:getWidth() + self.gap
    else
       x = x + self.box.size + self.gap
    end
