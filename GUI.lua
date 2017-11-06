@@ -77,6 +77,7 @@ function GUI.create_main_menu(x, y, w, h, reset_game)
       Util.current_screen = Util.screens.on_singleplayer_game
    end
    local function goto_options()
+      GUI.create_options_menu(GUI.w, GUI.h)
       Util.current_screen = Util.screens.on_options
    end
    local buttons = {
