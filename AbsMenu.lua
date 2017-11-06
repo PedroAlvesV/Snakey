@@ -9,7 +9,6 @@ local Button = {}
 local TextInput = {}
 local TextBox = {}
 local CheckBox = {}
-local CheckList = {} -- must value
 local Slider = {}
 local Selector = {} -- like Resolution < 1366x768 >
 
@@ -535,222 +534,48 @@ function CheckBox:process_key(key)
    return actions.PASSTHROUGH
 end
 
-function CheckList.new(title, list, default_value, callback)
-   -- MUST EDIT
-   local function make_item(i, label, value)
-      return CheckBox.new(label, value, callback)
-   end
-   local checklist = util.make_list_items(make_item, list, default_value)
+function Selector.new(title, list, color, callback)
+   -- MUST TEST
    local self = {
-      height = #checklist+1,
-      checklist = checklist,
-      focusable = true,
-      subfocus = 1,
-      view_pos = 1,
-      visible = 5,
       title = title,
-      tooltip = tooltip,
+      list = list,
+      focusable = true,
+      color = color or colors.WHITE,
+      selected = 1,
+      gap = 12,
       callback = callback,
       enabled = true,
    }
-   if self.height > self.visible then
-      self.height = self.visible + 1
-      self.scrollable = true
-   end
-   return setmetatable(self, { __index = CheckList })
-end
-
-function CheckList:draw(x, y, focus)
-   -- MUST EDIT
-   self.width = scr_w-8
-   if focus and self.focusable then
-      drawable:attrset(colors.current)
-   else
-      drawable:attrset(colors.default)
-   end
-   drawable:mvaddstr(y, x, self.title)
-   for i=self.view_pos, #self.checklist do
-      local attr = false
-      if focus and self.focusable then
-         if i == self.subfocus then
-            attr = {widget = true, subitem = true}
-         else
-            attr = {widget = true, subitem = false}
-         end
-      end
-      if i < self.view_pos + self.visible then
-         self.checklist[i]:draw(x, y+i-self.view_pos+1, attr)
-      end
-   end
-   if #self.checklist > self.visible then
-      draw_scrollbar(self.width+3, y, self.visible, #self.checklist, self.view_pos)
-   end
-end
-
-function CheckList:process_key(key)
-   -- MUST EDIT
-   if key == keys.TAB then
-      return actions.NEXT
-   end
-   if self.focusable then
-      if key == keys.DOWN then
-         if self.subfocus < #self.checklist then
-            self.subfocus = self.subfocus + 1
-            if self.scrollable and self.subfocus - self.view_pos + 1 == self.visible + 1 then
-               self.view_pos = self.view_pos + 1
-            end
-            return actions.HANDLED
-         elseif self.subfocus == #self.checklist then
-            return actions.NEXT
-         end
-      elseif key == keys.UP then
-         if self.subfocus > 1 then
-            self.subfocus = self.subfocus - 1
-            if self.scrollable and self.subfocus == self.view_pos - 1 then
-               self.view_pos = self.view_pos - 1
-            end
-            return actions.HANDLED
-         elseif self.subfocus == 1 then
-            return actions.PREVIOUS
-         end
-      elseif key == keys.HOME then
-         self.subfocus = 1
-         if self.scrollable then
-            self.view_pos = 1
-         end
-         return actions.HANDLED
-      elseif key == keys.END then
-         self.subfocus = #self.checklist
-         if self.scrollable then
-            self.view_pos = self.subfocus - self.visible + 1
-         end
-         return actions.HANDLED
-      else
-         return self.checklist[self.subfocus]:process_key(key, self.subfocus)
-      end
-   else
-      if key == keys.DOWN then
-         return actions.NEXT
-      elseif key == keys.UP then
-         return actions.PREVIOUS
-      end
-   end
-   return actions.PASSTHROUGH
-end
-
-function Selector.new(title, list, default_value, callback)
-   -- MUST EDIT
-   local function make_item(i, label, value)
-      if value then
-         default_value = i
-      end
-      return label
-   end
-   local items = util.make_list_items(make_item, list, default_value)
-   local self = {
-      height = #items+1,
-      list = items,
-      focusable = true,
-      subfocus = 1,
-      view_pos = 1,
-      visible = 5,
-      title = title,
-      marked = default_value or 1,
-      tooltip = tooltip,
-      callback = callback,
-      enabled = true,
-   }
-   if self.height > self.visible then self.height = self.visible + 1 end
+   self.title_text = love.graphics.newText(love.graphics.newFont(20), self.title)
    return setmetatable(self, { __index = Selector })
 end
 
 function Selector:draw(x, y, focus)
-   -- MUST EDIT
-   if self.height > self.visible then
-      self.height = self.visible + 1
-      self.scrollable = true
-   end
-   self.width = scr_w-8
-   if focus and self.focusable then
-      drawable:attrset(colors.current)
-   else
-      drawable:attrset(colors.default)
-   end
-   drawable:mvaddstr(y, x, self.title)
-   for i=self.view_pos, #self.list do
-      if focus and self.focusable then
-         if i == self.subfocus then
-            drawable:attrset(colors.subcurrent)
-         else
-            drawable:attrset(colors.current)
-         end
-      else
-         drawable:attrset(colors.default)
-      end
-      local mark = " "
-      if i == self.marked then
-         mark = "*"
-      end
-      if i < self.view_pos + self.visible then
-         local label = util.append_blank_space(self.list[i], scr_w-utf8.len(self.list[i])-12)
-         drawable:mvaddstr(y+i-self.view_pos+1, x, "("..mark..") "..label)
-      end
-   end
-   if #self.list > self.visible then
-      draw_scrollbar(self.width+3, y, self.visible, #self.list, self.view_pos)
-   end
+   local selector = love.graphics.newText(love.graphics.newFont(20), "< "..self.list[self.selected].." >")
+   local total_width = self.title_text:getWidth() + self.gap + selector:getWidth()
+   love.graphics.setColor(unpack(self.color))
+   love.graphics.draw(self.title_text, x - total_width/2, y)
+   love.graphics.draw(selector, x + self.gap, y)
 end
 
 function Selector:process_key(key)
-   -- MUST EDIT
-   if key == keys.TAB then
+   -- MUST TEST
+   if key == keys.LEFT then
+      if self.selected > 1 then
+         self.selected = self.selected - 1
+      end
+      return actions.HANDLED
+   elseif key == keys.RIGHT then
+      if self.selected < #self.list then
+         self.selected = self.selected + 1
+      end
+      return actions.HANDLED
+   elseif key == keys.ENTER or key == keys.SPACE or key == keys.DOWN then
+      run_callback(self, self.selected, self.list[self.selected])
       return actions.NEXT
-   end
-   if self.focusable then
-      if key == keys.ENTER or key == keys.SPACE then
-         if self.marked ~= self.subfocus then
-            self.marked = self.subfocus
-            run_callback(self, self.marked, self.list[self.marked])
-         end
-      elseif key == keys.DOWN then
-         if self.subfocus < #self.list then
-            self.subfocus = self.subfocus + 1
-            if self.scrollable and self.subfocus - self.view_pos + 1 == self.visible + 1 then
-               self.view_pos = self.view_pos + 1
-            end
-            return actions.HANDLED
-         elseif self.subfocus == #self.list then
-            return actions.NEXT
-         end
-      elseif key == keys.UP then
-         if self.subfocus > 1 then
-            self.subfocus = self.subfocus - 1
-            if self.scrollable and self.subfocus == self.view_pos - 1 then
-               self.view_pos = self.view_pos - 1
-            end
-            return actions.HANDLED
-         elseif self.subfocus == 1 then
-            return actions.PREVIOUS
-         end
-      elseif key == keys.HOME then
-         self.subfocus = 1
-         if self.scrollable then
-            self.view_pos = 1
-         end
-         return actions.HANDLED
-      elseif key == keys.END then
-         self.subfocus = #self.list
-         if self.scrollable then
-            self.view_pos = self.subfocus - self.visible + 1
-         end
-         return actions.HANDLED
-      end
-   else
-      if key == keys.DOWN then
-         return actions.NEXT
-      elseif key == keys.UP then
-         return actions.PREVIOUS
-      end
+   elseif key == keys.UP then
+      run_callback(self, self.selected, self.list[self.selected])
+      return actions.PREVIOUS
    end
    return actions.PASSTHROUGH
 end
@@ -786,15 +611,8 @@ function Menu:add_checkbox(id, label, properties, callback)
    create_widget(self, 'CHECKBOX', CheckBox, id, label, properties, callback)
 end
 
-function Menu:create_checklist(id, title, list, default_value, callback)
-   local widget = create_widget(self, 'CHECKLIST', CheckList, id, title, list, default_value, callback)
-   for _, checkbox in ipairs(widget.checklist) do
-      checkbox.id = id
-   end
-end
-
-function Menu:create_selector(id, title, list, default_value, callback)
-   create_widget(self, 'SELECTOR', Selector, id, title, list, default_value, callback)
+function Menu:add_selector(id, title, list, color, callback)
+   create_widget(self, 'SELECTOR', Selector, id, title, list, color, callback)
 end
 
 function Menu:show_message_box(message, buttons)
