@@ -34,7 +34,7 @@ end
 
 function GUI.draw_HUD(x, y, score)
    local text_h = Util.hud_height*0.95
-   local score_text = love.graphics.newText(love.graphics.newFont(text_h), "Score: "..score)
+   local score_text = love.graphics.newText(love.graphics.newFont(text_h), "Score: "..score.." pts")
    love.graphics.setColor(GUI.main_color)
    if control_vars.is_mute then
       local mute_text = love.graphics.newText(love.graphics.newFont(text_h), "MUTE")
@@ -126,9 +126,9 @@ end
 
 function GUI.create_death_menu(w, h, score)
    local death_menu = menu.new_menu(0, 0, w, h)
-   local properties = {color = GUI.main_color}
-   death_menu:add_label('title', "Game over", properties)
-   death_menu:add_label('score', "Score: "..score, properties)
+   local properties = {font = love.graphics.newFont(50), color = GUI.main_color}
+   death_menu:add_label('title', "Game Over", properties)
+   death_menu:add_label('score', "Your score: "..score.." pts", {color = GUI.main_color})
    GUI.death_menu = death_menu
    return GUI.death_menu
 end
