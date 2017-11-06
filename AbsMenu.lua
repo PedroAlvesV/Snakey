@@ -798,6 +798,14 @@ function Menu:get_value(id, index)
    end
 end
 
+function Menu:set_focus(widget_n)
+   if widget_n > 0 and widget_n <= #self.widgets then
+      self.focus = widget_n
+      return true
+   end
+   return false
+end
+
 local function iter_screen_items(screen)
    -- MUST EDIT
    local data = {}
@@ -833,7 +841,11 @@ function Menu:process_key(key)
       local widget = self.widgets[self.focus].widget
       local next_focus = self.focus + direction
       if next_focus > 0 and next_focus <= #self.widgets then
-         self.focus = next_focus
+         if self.widgets[next_focus].widget.focusable then
+            self.focus = next_focus
+         else
+            move_focus(direction+direction)
+         end
       end
       return actions.HANDLED
    end
