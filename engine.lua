@@ -202,7 +202,7 @@ local function run(snake, field)
    elseif Util.current_screen == Util.screens.on_multiplayer_game then
       -- TODO
    elseif Util.current_screen == Util.screens.on_options then
-      -- TODO
+      return GUI.draw_options_menu()
    elseif Util.current_screen == Util.screens.on_rankings then
       -- TODO
    end
@@ -210,6 +210,7 @@ end
 
 function engine.start()
    GUI.create_main_menu(0, 200, Util.w, Util.h-200, reset_game)
+   GUI.create_options_menu(Util.w, Util.h)
    GUI.w, GUI.h = Util.w, Util.h
    reset_game()
 end

@@ -76,10 +76,13 @@ function GUI.create_main_menu(x, y, w, h, reset_game)
       reset_game()
       Util.current_screen = Util.screens.on_singleplayer_game
    end
+   local function goto_options()
+      Util.current_screen = Util.screens.on_options
+   end
    local buttons = {
       {'b_singleplr', "Single Player", colors_props, singleplr_func},
       {'b_multip', "Multiplayer", colors_props},
-      {'b_opts', "Options", colors_props},
+      {'b_opts', "Options", colors_props, goto_options},
       {'b_ranks', "Rankings", colors_props},
       {'b_quit', "Quit", colors_props, function() love.window.close() end},
    }
@@ -88,15 +91,6 @@ function GUI.create_main_menu(x, y, w, h, reset_game)
    end
    GUI.main_menu = main_menu
    return GUI.main_menu
-end
-
-function GUI.create_death_menu(w, h, score)
-   local death_menu = menu.new_menu(0, 0, w, h)
-   local properties = {color = GUI.main_color}
-   death_menu:add_label('dead', "Game over", properties)
-   death_menu:add_label('score', "Score: "..score, properties)
-   GUI.death_menu = death_menu
-   return GUI.death_menu
 end
 
 function GUI.create_pause_menu(x, y, w, h)
@@ -124,8 +118,55 @@ function GUI.create_pause_menu(x, y, w, h)
    for _, item in ipairs(buttons) do
       pause_menu:add_button(unpack(item))
    end
+   --pause_menu:add_selector('sel_test', "Selector", {'aaa', 'bbb', 'ccc'}, nil, function(self, index, selected) if index == 3 then GUI.main_color = colors.LBLUE else GUI.main_color = colors.WHITE end end)
    GUI.pause_menu = pause_menu
    return GUI.pause_menu
+end
+
+function GUI.create_death_menu(w, h, score)
+   local death_menu = menu.new_menu(0, 0, w, h)
+   local properties = {color = GUI.main_color}
+   death_menu:add_label('title', "Game over", properties)
+   death_menu:add_label('score', "Score: "..score, properties)
+   GUI.death_menu = death_menu
+   return GUI.death_menu
+end
+
+function GUI.create_options_menu(w, h)
+   local options_menu = menu.new_menu(0, 0, w, h)
+   local properties = {color = GUI.main_color}
+   options_menu:add_label('title', "Options", properties)
+   local colors_list = {"White", "Red", "Orange", "Yellow", "Lime", "Green",
+      "Cyan", "Light Blue", "Dark Blue", "Purple", "Magenta", "Pink"}
+   options_menu:add_selector('sl_color', "Color scheme:", colors_list)
+   options_menu:add_checkbox('chk_fullscreen', "Fullscreen", {box_align = 'right'})
+   local res_list = {"800 x 600", "1024 x 768", "1366 x 768"}
+   options_menu:add_selector('sl_resolution', "Resolution:", res_list)
+   local colors_props = {
+      label_color = {
+         default = GUI.main_color,
+         focused = colors.BLACK,
+      },
+      fill_colors = {
+         default = colors.BLACK,
+         focused = GUI.main_color,
+         disabled = colors.BLACK,
+      },
+      outline_colors = {
+         default = GUI.main_color,
+         focused = GUI.main_color,
+         disabled = colors.BLACK,
+      },
+   }
+   local function go_back()
+      -- TODO change global values
+      GUI.create_options_menu(GUI.w, GUI.h)
+      Util.current_screen = Util.screens.on_main
+   end
+   options_menu:add_button('b_back', "Back", colors_props, function() Util.current_screen = Util.screens.on_main end)
+   options_menu:set_focus(2)
+   GUI.options_menu = options_menu
+   return GUI.options_menu
 end
 
 function GUI.draw_main_menu()
@@ -146,25 +187,6 @@ function GUI.draw_main_menu()
    love.graphics.rectangle("fill", box_x, box_y, box_w, box_h)
    love.graphics.setColor(unpack(GUI.main_color))
    love.graphics.draw(title, title_x, title_y, nil, nil, nil, title_w/2, title_h/2)
-   return action
-end
-
-function GUI.draw_death_menu(w, h)
-   local action = GUI.death_menu:run()
---   love.graphics.rectangle("line", w/2-305, h/2-57, 620, 115)
---   love.graphics.rectangle("line", w/2-305, h/2-57, 620, 115)
---   love.graphics.setColor(unpack(colors.BLACK))
---   love.graphics.rectangle("fill", w/2-305, h/2-57, 620, 115)
---   love.graphics.setColor(unpack(GUI.main_color))
---   love.graphics.rectangle("line", w/2-100, h/2+50, 200, 40)
---   love.graphics.rectangle("line", w/2-100, h/2+50, 200, 40)
---   love.graphics.setColor(unpack(colors.BLACK))
---   love.graphics.rectangle("fill", w/2-100, h/2+50, 200, 40)
---   love.graphics.setColor(unpack(GUI.main_color))
---   love.graphics.setFont(love.graphics.newFont(100))
---   love.graphics.print("Game Over", w/2-280, h/2-55)
---   love.graphics.setFont(love.graphics.newFont(20))
---   love.graphics.print("Score: "..score, w/2-48, h/2+59)
    return action
 end
 
@@ -196,6 +218,30 @@ function GUI.draw_pause_menu()
    local box_y = title_y - box_h/2
    love.graphics.setColor(unpack(GUI.main_color))
    love.graphics.draw(title, title_x, title_y, nil, nil, nil, title_w/2, title_h/2)
+   return action
+end
+
+function GUI.draw_death_menu(w, h)
+   local action = GUI.death_menu:run()
+--   love.graphics.rectangle("line", w/2-305, h/2-57, 620, 115)
+--   love.graphics.rectangle("line", w/2-305, h/2-57, 620, 115)
+--   love.graphics.setColor(unpack(colors.BLACK))
+--   love.graphics.rectangle("fill", w/2-305, h/2-57, 620, 115)
+--   love.graphics.setColor(unpack(GUI.main_color))
+--   love.graphics.rectangle("line", w/2-100, h/2+50, 200, 40)
+--   love.graphics.rectangle("line", w/2-100, h/2+50, 200, 40)
+--   love.graphics.setColor(unpack(colors.BLACK))
+--   love.graphics.rectangle("fill", w/2-100, h/2+50, 200, 40)
+--   love.graphics.setColor(unpack(GUI.main_color))
+--   love.graphics.setFont(love.graphics.newFont(100))
+--   love.graphics.print("Game Over", w/2-280, h/2-55)
+--   love.graphics.setFont(love.graphics.newFont(20))
+--   love.graphics.print("Score: "..score, w/2-48, h/2+59)
+   return action
+end
+
+function GUI.draw_options_menu()
+   local action = GUI.options_menu:run()
    return action
 end
 
