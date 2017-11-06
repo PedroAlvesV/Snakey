@@ -535,7 +535,6 @@ function CheckBox:process_key(key)
 end
 
 function Selector.new(title, list, color, callback)
-   -- MUST TEST
    local self = {
       title = title,
       list = list,
@@ -551,23 +550,30 @@ function Selector.new(title, list, color, callback)
 end
 
 function Selector:draw(x, y, focus)
-   local selector = love.graphics.newText(love.graphics.newFont(20), "< "..self.list[self.selected].." >")
+   local delimiter = {' ',' '}
+   if focus then
+      delimiter = {'‹','›'}
+   end
+   local title_text_x = x
+   x = x + self.title_text:getWidth() + self.gap
+   local selector = love.graphics.newText(love.graphics.newFont(20), delimiter[1].." "..self.list[self.selected].." "..delimiter[2])
    local total_width = self.title_text:getWidth() + self.gap + selector:getWidth()
    love.graphics.setColor(unpack(self.color))
-   love.graphics.draw(self.title_text, x - total_width/2, y)
-   love.graphics.draw(selector, x + self.gap, y)
+   love.graphics.draw(self.title_text, title_text_x - total_width/2, y)
+   love.graphics.draw(selector, x - total_width/2 , y)
 end
 
 function Selector:process_key(key)
-   -- MUST TEST
    if key == keys.LEFT then
       if self.selected > 1 then
          self.selected = self.selected - 1
+         run_callback(self, self.selected, self.list[self.selected])
       end
       return actions.HANDLED
    elseif key == keys.RIGHT then
       if self.selected < #self.list then
          self.selected = self.selected + 1
+         run_callback(self, self.selected, self.list[self.selected])
       end
       return actions.HANDLED
    elseif key == keys.ENTER or key == keys.SPACE or key == keys.DOWN then
