@@ -11,6 +11,9 @@ local TextBox = {}
 local CheckBox = {}
 local Slider = {}
 local Selector = {}
+local Implicit_Button = {}
+
+local IMPLICIT_BUTTON_ID = {}
 
 local colors = Util.colors
 local default_bg_color = colors.BLACK
@@ -31,7 +34,7 @@ function AbsMenu.new_menu(x, y, w, h)
       w = w,
       h = h,
       widgets = {},
-      focus = 1,
+      focus = 0,
       background_color = default_bg_color,
    }
    setmetatable(self, {__index = Menu})
@@ -594,6 +597,24 @@ function Selector:process_key(key)
    return actions.PASSTHROUGH
 end
 
+function Implicit_Button.new(callback)
+   local self = {
+      callback = callback,
+      focusable = true,
+   }
+   return setmetatable(self, { __index = Implicit_Button })
+end
+
+function Implicit_Button:draw() end
+
+function Implicit_Button:process_key(key)
+   if key == keys.ENTER or key == keys.SPACE then
+      run_callback(self, self.callback)
+      return actions.HANDLED
+   end
+   return actions.PASSTHROUGH
+end
+
 local function create_widget(self, type_name, class, id, ...)
    local item = {
       id = id,
@@ -627,6 +648,10 @@ end
 
 function Menu:add_selector(id, title, list, color, callback)
    create_widget(self, 'SELECTOR', Selector, id, title, list, color, callback)
+end
+
+function Menu:add_implicit_button(callback)
+   create_widget(self, 'IMPLICIT_BUTTON', Implicit_Button, IMPLICIT_BUTTON_ID, callback)
 end
 
 function Menu:show_message_box(message, buttons)
@@ -853,11 +878,36 @@ function Menu:process_key(key)
    end
 end
 
-function Menu:run()
+function Menu:run(implicit_callback)
+   if self.focus == 0 then
+      local function apply_focus()
+         for i, item in ipairs(self.widgets) do
+            if item.widget.focusable then
+               self.focus = i
+               return true
+            end
+         end
+         return false
+      end
+      if not apply_focus() then
+         self:add_implicit_button(implicit_callback or
+            function()
+               io.stdout:setvbuf('no')
+               print("[AbsMenu]: Please, pass an implicit callback function to Menu:run()")
+               love.window.close()
+            end)
+      end
+   end
    love.graphics.setColor(unpack(self.background_color))
    love.graphics.rectangle('fill', self.x, self.y, self.w, self.h)
+   local valid_widgets = 0
+   for i=1, #self.widgets do
+      if self.widgets[i].id ~= IMPLICIT_BUTTON_ID then
+         valid_widgets = valid_widgets + 1
+      end
+   end
    for i, item in ipairs(self.widgets) do
-      item.y = self.h * (i/(#self.widgets+1))
+      item.y = self.h * (i/(valid_widgets+1))
    end
    for i, item in ipairs(self.widgets) do
       item.widget:draw(self.x + self.w/2, self.y + item.y, i == self.focus)

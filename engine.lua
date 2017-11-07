@@ -36,14 +36,6 @@ local function handle_playing(key)
    end
 end
 
-local function handle_exception(key)
-   function love.keypressed(key)
-      if key == keys.SPACE or key == keys.ESC or key == keys.ENTER then
-         Util.current_screen = Util.screens.on_main
-      end
-   end
-end
-
 local function valid_fruit(snake, fruit)
    for i=1, #snake:get_segments() do
       local reset = false
@@ -145,6 +137,7 @@ local function reset_fruit(fruit)
 end
 
 local function die()
+   GUI.create_death_menu(GUI.w, GUI.h, (#snake:get_segments()-Util.initial_size)*100)
    Util.current_screen = Util.screens.on_death
    if not Util.control_vars.is_mute then
       sfx.toque:play()
@@ -191,7 +184,6 @@ local function run(snake, field)
    elseif Util.current_screen == Util.screens.on_pause then
       return GUI.draw_pause_menu()
    elseif Util.current_screen == Util.screens.on_death then
-      GUI.create_death_menu(GUI.w, GUI.h, score)
       return GUI.draw_death_menu(GUI.w, GUI.h)
    elseif Util.current_screen == Util.screens.on_singleplayer_game then
       GUI.draw_HUD(0, 0, score)
@@ -226,8 +218,6 @@ function love.draw()
       end
    elseif Util.current_screen == Util.screens.on_multiplayer_game then
       -- TODO
-   elseif not action and Util.current_screen == Util.screens.on_death then
-      handle_exception()
    end
 end
 

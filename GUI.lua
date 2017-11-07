@@ -210,7 +210,7 @@ function GUI.draw_pause_menu()
 end
 
 function GUI.draw_death_menu(w, h)
-   local action = GUI.death_menu:run()
+   local action = GUI.death_menu:run(function() Util.current_screen = Util.screens.on_main end)
 --   love.graphics.rectangle("line", w/2-305, h/2-57, 620, 115)
 --   love.graphics.rectangle("line", w/2-305, h/2-57, 620, 115)
 --   love.graphics.setColor(unpack(colors.BLACK))
