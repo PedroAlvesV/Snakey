@@ -718,26 +718,13 @@ function Menu:set_background_color(color)
    return true
 end
 
-function Menu:set_enabled(id, bool, index)
+function Menu:set_enabled(id, bool)
    -- MUST EDIT
    for _, item in ipairs(self.widgets) do
       if item.id == id then
          local widget = item.widget
-         if item.type == 'BUTTON_BOX' then
-            widget.buttons[index].focusable = bool
-            widget.subfocus = 1
-            while not widget.buttons[widget.subfocus].focusable and widget.subfocus < #widget.buttons do
-               widget.subfocus = widget.subfocus + 1
-            end
-            widget.focusable = widget.buttons[widget.subfocus].focusable
-            if not widget.focusable then
-               widget.subfocus = 0
-            end
-         else
-            if item.type ~= 'LABEL' then
-               widget.focusable = bool
-            end
-         end
+         widget.focusable = bool
+         widget.enabled = bool
       end
    end
 end
