@@ -53,7 +53,7 @@ end
 
 local function reset_game(gamemode)
 
-   GUI.create_pause_menu(settings.resolution_w, settings.resolution_h)
+   GUI.create_functions.pause_menu(0, 0, settings.resolution_w, settings.resolution_h)
 
    -- sets field
    for i=1, Util.field_w do
@@ -165,29 +165,23 @@ local function game_mechanics()
          die()
       end
       if snake:get_X(1) == fruit:get_X() and snake:get_Y(1) == fruit:get_Y() then
-         snake:add_segment()
-         apply_effect(fruit)
-         fruit = valid_fruit(snake, reset_fruit(fruit))
-         if not Util.control_vars.is_mute then
-            sfx.ponto:play()
-         end
+         make_point()
       end
    elseif Util.current_screen == Util.screens.on_multiplayer_game then
       -- TODO
    end
 end
 
-local function run(snake, field)
-   local score = (#snake:get_segments()-Util.initial_size)*100
+local function run(field)
    if Util.current_screen == Util.screens.on_main then
       return GUI.draw_main_menu()
    elseif Util.current_screen == Util.screens.on_pause then
       return GUI.draw_pause_menu()
    elseif Util.current_screen == Util.screens.on_death then
-      return GUI.draw_death_menu(GUI.w, GUI.h)
+      return GUI.draw_death_menu(settings.resolution_w, settings.resolution_h)
    elseif Util.current_screen == Util.screens.on_singleplayer_game then
-      GUI.draw_HUD(0, 0, score)
-      GUI.draw_field(0, Util.hud_height, GUI.w, GUI.h-Util.hud_height, field, Util.sqr_size)
+      GUI.draw_HUD(0, 0, Util.score)
+      GUI.draw_field(0, Util.hud_height, settings.resolution_w, settings.resolution_h-Util.hud_height, field, Util.sqr_size)
       game_mechanics()
       return actions.PASSTHROUGH
    elseif Util.current_screen == Util.screens.on_multiplayer_setup then
@@ -202,14 +196,13 @@ local function run(snake, field)
 end
 
 function engine.start()
-   GUI.create_main_menu(0, 200, settings.resolution_w, settings.resolution_h-200, reset_game)
-   GUI.create_options_menu(settings.resolution_w, settings.resolution_h)
-   GUI.w, GUI.h = settings.resolution_w, settings.resolution_h
+   GUI.create_functions.main_menu(0, 200, settings.resolution_w, settings.resolution_h-200, reset_game)
+   GUI.create_functions.options_menu(0, 0, settings.resolution_w, settings.resolution_h)
    reset_game()
 end
 
 function love.draw()
-   local action, key = run(snake, field)
+   local action, key = run(field)
    if Util.current_screen == Util.screens.on_singleplayer_game then
       function love.keypressed(key)
          if key then

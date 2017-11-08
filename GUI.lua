@@ -10,6 +10,7 @@ local control_vars = Util.control_vars
 local settings = Util.settings
 
 GUI.main_color = settings.main_color
+GUI.create_functions = {}
 
 function GUI.random_color()
    local keyset = {}
@@ -41,7 +42,7 @@ function GUI.draw_field(x, y, w, h, field)
    end
 end
 
-function GUI.create_main_menu(x, y, w, h, reset_game)
+function GUI.create_functions.main_menu(x, y, w, h, reset_game)
    local main_menu = menu.new_menu(x, y, w, h)
    local colors_props = {
       label_color = {
@@ -64,7 +65,7 @@ function GUI.create_main_menu(x, y, w, h, reset_game)
       Util.current_screen = Util.screens.on_singleplayer_game
    end
    local function goto_options()
-      GUI.create_options_menu(GUI.w, GUI.h)
+      GUI.create_functions.options_menu(0, 0, Util.settings.resolution_w, Util.settings.resolution_h)
       Util.current_screen = Util.screens.on_options
    end
    local buttons = {
@@ -81,8 +82,8 @@ function GUI.create_main_menu(x, y, w, h, reset_game)
    return GUI.main_menu
 end
 
-function GUI.create_pause_menu(w, h)
-   local pause_menu = menu.new_menu(0, 0, w, h)
+function GUI.create_functions.pause_menu(x, y, w, h)
+   local pause_menu = menu.new_menu(x, y, w, h)
    pause_menu:add_label('title', "Pause", {font = love.graphics.newFont(100), color = settings.main_color, underline = true})
    local colors_props = {
       label_color = {
@@ -112,17 +113,17 @@ function GUI.create_pause_menu(w, h)
    return GUI.pause_menu
 end
 
-function GUI.create_death_menu(w, h, score)
-   local death_menu = menu.new_menu(0, 0, w, h)
+function GUI.create_functions.death_menu(x, y, w, h)
+   local death_menu = menu.new_menu(x, y, w, h)
    local properties = {font = love.graphics.newFont(50), color = settings.main_color}
    death_menu:add_label('title', "Game Over", properties)
-   death_menu:add_label('score', "Your score: "..score.." pts", {color = settings.main_color})
+   death_menu:add_label('score', "Your score: "..Util.score.." pts", {color = settings.main_color})
    GUI.death_menu = death_menu
    return GUI.death_menu
 end
 
-function GUI.create_options_menu(w, h)
-   local options_menu = menu.new_menu(0, 0, w, h)
+function GUI.create_functions.options_menu(x, y, w, h)
+   local options_menu = menu.new_menu(x, y, w, h)
    local properties = {font = love.graphics.newFont(50), color = settings.main_color, underline = true}
    options_menu:add_label('title', "Options", properties)
    local colors_list = {"White", "Red", "Orange", "Yellow", "Lime", "Green",
@@ -152,8 +153,7 @@ function GUI.create_options_menu(w, h)
       local data = options_menu:get_data()
       --for k,v in pairs(data) do print(k,v) end
       Util.settings.fullscreen = data.chk_fullscreen
-      GUI.create_options_menu(GUI.w, GUI.h)
-      Util.apply_settings()
+      Util.apply_settings(GUI.create_functions)
       Util.current_screen = Util.screens.on_main
    end
    options_menu:add_button('b_back', "Back", colors_props, go_back)
@@ -168,8 +168,8 @@ function GUI.draw_main_menu()
    local title = love.graphics.newText(love.graphics.newFont(100), "Snakey")
    local title_w = title:getWidth()
    local title_h = title:getHeight()
-   local title_x = math.ceil(GUI.w/2)
-   local title_y = math.ceil(GUI.w/6)
+   local title_x = math.ceil(Util.settings.resolution_w/2)
+   local title_y = math.ceil(Util.settings.resolution_w/6)
    local box_w = title_w+30
    local box_h = title_h+20
    local box_x = title_x - box_w/2
@@ -195,6 +195,8 @@ end
 
 function GUI.draw_options_menu()
    local action = GUI.options_menu:run()
+   local _, is_fullscreen = GUI.options_menu:get_value('chk_fullscreen')
+   GUI.options_menu:set_enabled('sl_resolution', not is_fullscreen)
    return action
 end
 

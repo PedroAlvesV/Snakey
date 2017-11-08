@@ -47,6 +47,8 @@ Util.hud_height = 40
 Util.initial_size = 4
 Util.velocity = 0.05
 
+Util.score = 0
+
 Util.sfx = {
    ponto = love.audio.newSource("/sfx/ponto.ogg", "static"),
    toque = love.audio.newSource("/sfx/toque.ogg", "static"),
@@ -67,8 +69,16 @@ Util.settings = {
    fullscreen = false,
 }
 
-function Util.apply_settings()
+function Util.apply_settings(functions)
    love.window.setFullscreen(Util.settings.fullscreen)
+   Util.settings.resolution_w, Util.settings.resolution_h = love.window.getMode()
+   for name, func in pairs(functions) do
+      if name == 'main_menu' then
+         func(0, 200, Util.settings.resolution_w, Util.settings.resolution_h-200, reset_game)
+      else
+         func(0, 0, Util.settings.resolution_w, Util.settings.resolution_h)
+      end
+   end
 end
 
 function Util.set_main_color(color)
