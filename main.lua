@@ -1,8 +1,4 @@
-local GUI = require 'GUI'
-local Util = require 'Util'
-local engine = require 'engine'
-
-local keys = Util.keys
+local engine = require('engine')
 
 love.window.setTitle("Snakey")
 
