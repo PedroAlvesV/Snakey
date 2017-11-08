@@ -60,12 +60,16 @@ Util.control_vars = {
    is_mute = false,
 }
 
-Util.global = {
+Util.settings = {
    main_color = Util.colors.WHITE,
    resolution_w = Util.w,
    resolution_h = Util.h,
    fullscreen = false,
 }
+
+function Util.apply_settings()
+   love.window.setFullscreen(Util.settings.fullscreen)
+end
 
 function Util.set_main_color(color)
    for i in ipairs(color) do
@@ -73,12 +77,12 @@ function Util.set_main_color(color)
          return false
       end
    end
-   Util.global.main_color = color
+   Util.settings.main_color = color
    return true
 end
 
 function Util.get_main_color()
-   return Util.global.main_color
+   return Util.settings.main_color
 end
 
 Util.screens = {
