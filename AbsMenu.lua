@@ -545,12 +545,13 @@ function CheckBox:process_key(key)
    return actions.PASSTHROUGH
 end
 
-function Selector.new(title, list, color, callback)
+function Selector.new(title, list, default_color, disabled_color, callback)
    local self = {
       title = title,
       list = list,
       focusable = true,
-      color = color or colors.WHITE,
+      default_color = default_color or colors.WHITE,
+      disabled_color = disabled_color or colors.GRAY,
       selected = 1,
       gap = 12,
       callback = callback,
@@ -569,7 +570,10 @@ function Selector:draw(x, y, focus)
    x = x + self.title_text:getWidth() + self.gap
    local selector = love.graphics.newText(love.graphics.newFont(20), delimiter[1].." "..self.list[self.selected].." "..delimiter[2])
    local total_width = self.title_text:getWidth() + self.gap + selector:getWidth()
-   love.graphics.setColor(unpack(self.color))
+   love.graphics.setColor(unpack(self.default_color))
+   if not self.enabled then
+      love.graphics.setColor(unpack(self.disabled_color))
+   end
    love.graphics.draw(self.title_text, title_text_x - total_width/2, y)
    love.graphics.draw(selector, x - total_width/2 , y)
 end
@@ -646,8 +650,8 @@ function Menu:add_checkbox(id, label, properties, callback)
    create_widget(self, 'CHECKBOX', CheckBox, id, label, properties, callback)
 end
 
-function Menu:add_selector(id, title, list, color, callback)
-   create_widget(self, 'SELECTOR', Selector, id, title, list, color, callback)
+function Menu:add_selector(id, title, list, default_color, disabled_color, callback)
+   create_widget(self, 'SELECTOR', Selector, id, title, list, default_color, disabled_color, callback)
 end
 
 function Menu:add_implicit_button(callback)
