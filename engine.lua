@@ -81,70 +81,82 @@ local function reset_game(gamemode)
    end
 end
 
-local function move_snake()
-   local function follow_segment(index, direction)
-      if index <= #snake:get_segments() then
-         local segment = snake:get_segments()[index]
-         if segment.direction == 'up' then
-            snake:set_Y(index, snake:get_Y(index)-1)
-         elseif segment.direction == 'down' then
-            snake:set_Y(index, snake:get_Y(index)+1)
-         elseif segment.direction == 'left' then
-            snake:set_X(index, snake:get_X(index)-1)
-         elseif segment.direction == 'right' then
-            snake:set_X(index, snake:get_X(index)+1)
-         end
-         field[segment.x][segment.y] = true
-         follow_segment(index+1, snake:get_direction(index))
-         if index > 1 then
-            snake:set_direction(index, direction)
+local function game_mechanics()
+
+   local function move_snake()
+      local function follow_segment(index, direction)
+         if index <= #snake:get_segments() then
+            local segment = snake:get_segments()[index]
+            if segment.direction == 'up' then
+               snake:set_Y(index, snake:get_Y(index)-1)
+            elseif segment.direction == 'down' then
+               snake:set_Y(index, snake:get_Y(index)+1)
+            elseif segment.direction == 'left' then
+               snake:set_X(index, snake:get_X(index)-1)
+            elseif segment.direction == 'right' then
+               snake:set_X(index, snake:get_X(index)+1)
+            end
+            field[segment.x][segment.y] = true
+            follow_segment(index+1, snake:get_direction(index))
+            if index > 1 then
+               snake:set_direction(index, direction)
+            end
          end
       end
+      follow_segment(1, snake:get_direction(1))
+      love.timer.sleep(Util.velocity)
    end
-   follow_segment(1, snake:get_direction(1))
-   love.timer.sleep(Util.velocity)
-end
 
-local function apply_effect(fruit)
-   local effect = fruit:get_effect()
-   if effect == 1 then
-      return -- normal fruit, has no special effect
-   elseif effect == 2 then
-      -- adds several fake fruits
-   elseif effect == 3 then
-      -- hurts/cuts snake
-   elseif effect == 4 then
-      -- mirrors controls
-   elseif effect == 5 then
-      -- turns field
-   elseif effect == 6 then
-      -- adds fake/mimic snake
-   elseif effect == 7 then
-      -- speeds snake up
-   elseif effect == 8 then
-      -- makes snake walk backwards
-   elseif effect == 9 then
-      -- empty
-   elseif effect == 10 then
-      -- empty
+
+   local function apply_effect(fruit)
+      local effect = fruit:get_effect()
+      if effect == 1 then
+         return -- normal fruit, has no special effect
+      elseif effect == 2 then
+         -- adds several fake fruits
+      elseif effect == 3 then
+         -- hurts/cuts snake
+      elseif effect == 4 then
+         -- mirrors controls
+      elseif effect == 5 then
+         -- turns field
+      elseif effect == 6 then
+         -- adds fake/mimic snake
+      elseif effect == 7 then
+         -- speeds snake up
+      elseif effect == 8 then
+         -- makes snake walk backwards
+      elseif effect == 9 then
+         -- empty
+      elseif effect == 10 then
+         -- empty
+      end
    end
-end
 
-local function reset_fruit(fruit)
-   fruit:set_X(love.math.random(2, (Util.field_w)-1))
-   fruit:set_Y(love.math.random(2, (Util.field_h)-1))
-   return fruit
-end
-
-local function die()
-   GUI.create_death_menu(GUI.w, GUI.h, (#snake:get_segments()-Util.initial_size)*100)
-   Util.current_screen = Util.screens.on_death
-   if not Util.control_vars.is_mute then
-      sfx.toque:play()
+   local function reset_fruit(fruit)
+      fruit:set_X(love.math.random(2, (Util.field_w)-1))
+      fruit:set_Y(love.math.random(2, (Util.field_h)-1))
+      return fruit
    end
-end
 
-local function game_mechanics()
+   local function make_point()
+      snake:add_segment()
+      Util.score = Util.score + 100
+      apply_effect(fruit)
+      fruit = valid_fruit(snake, reset_fruit(fruit))
+      if not Util.control_vars.is_mute then
+         sfx.ponto:play()
+      end
+   end
+
+   local function die()
+      GUI.create_functions.death_menu(0, 0, settings.resolution_w, settings.resolution_h)
+      Util.current_screen = Util.screens.on_death
+      if not Util.control_vars.is_mute then
+         sfx.toque:play()
+      end
+   end
+
    if Util.current_screen == Util.screens.on_singleplayer_game then
       for i=1, Util.field_w do
          for j=1, Util.field_h do
