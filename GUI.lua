@@ -7,9 +7,8 @@ local colors = Util.colors
 local keys = Util.keys
 local actions = Util.actions
 local control_vars = Util.control_vars
-local settings = Util.settings
 
-GUI.main_color = settings.main_color
+GUI.main_color = Util.settings.main_color
 GUI.create_functions = {}
 
 function GUI.random_color()
@@ -23,10 +22,10 @@ end
 function GUI.draw_HUD(x, y, score)
    local text_h = Util.hud_height*0.95
    local score_text = love.graphics.newText(love.graphics.newFont(text_h), "Score: "..score.." pts")
-   love.graphics.setColor(settings.main_color)
+   love.graphics.setColor(Util.settings.main_color)
    if control_vars.is_mute then
       local mute_text = love.graphics.newText(love.graphics.newFont(text_h), "MUTE")
-      love.graphics.draw(mute_text, settings.resolution_w-mute_text:getWidth(), y)
+      love.graphics.draw(mute_text, Util.settings.resolution_w-mute_text:getWidth(), y)
    end
    love.graphics.draw(score_text, x, y)
 end
@@ -46,17 +45,17 @@ function GUI.create_functions.main_menu(x, y, w, h, reset_game)
    local main_menu = menu.new_menu(x, y, w, h)
    local colors_props = {
       label_color = {
-         default = settings.main_color,
+         default = Util.settings.main_color,
          focused = colors.BLACK,
       },
       fill_colors = {
          default = colors.BLACK,
-         focused = settings.main_color,
+         focused = Util.settings.main_color,
          disabled = colors.BLACK,
       },
       outline_colors = {
-         default = settings.main_color,
-         focused = settings.main_color,
+         default = Util.settings.main_color,
+         focused = Util.settings.main_color,
          disabled = colors.BLACK,
       },
    }
@@ -84,20 +83,20 @@ end
 
 function GUI.create_functions.pause_menu(x, y, w, h)
    local pause_menu = menu.new_menu(x, y, w, h)
-   pause_menu:add_label('title', "Pause", {font = love.graphics.newFont(100), color = settings.main_color, underline = true})
+   pause_menu:add_label('title', "Pause", {font = love.graphics.newFont(100), color = Util.settings.main_color, underline = true})
    local colors_props = {
       label_color = {
-         default = settings.main_color,
+         default = Util.settings.main_color,
          focused = colors.BLACK,
       },
       fill_colors = {
          default = colors.BLACK,
-         focused = settings.main_color,
+         focused = Util.settings.main_color,
          disabled = colors.BLACK,
       },
       outline_colors = {
-         default = settings.main_color,
-         focused = settings.main_color,
+         default = Util.settings.main_color,
+         focused = Util.settings.main_color,
          disabled = colors.BLACK,
       },
    }
@@ -115,16 +114,16 @@ end
 
 function GUI.create_functions.death_menu(x, y, w, h)
    local death_menu = menu.new_menu(x, y, w, h)
-   local properties = {font = love.graphics.newFont(50), color = settings.main_color}
+   local properties = {font = love.graphics.newFont(50), color = Util.settings.main_color}
    death_menu:add_label('title', "Game Over", properties)
-   death_menu:add_label('score', "Your score: "..Util.score.." pts", {color = settings.main_color})
+   death_menu:add_label('score', "Your score: "..Util.score.." pts", {color = Util.settings.main_color})
    GUI.death_menu = death_menu
    return GUI.death_menu
 end
 
 function GUI.create_functions.options_menu(x, y, w, h)
    local options_menu = menu.new_menu(x, y, w, h)
-   local properties = {font = love.graphics.newFont(50), color = settings.main_color, underline = true}
+   local properties = {font = love.graphics.newFont(50), color = Util.settings.main_color, underline = true}
    options_menu:add_label('title', "Options", properties)
    local colors_list = {"White", "Red", "Orange", "Yellow", "Lime", "Green",
       "Cyan", "Light Blue", "Dark Blue", "Purple", "Magenta", "Pink"}
@@ -134,17 +133,17 @@ function GUI.create_functions.options_menu(x, y, w, h)
    options_menu:add_selector('sl_resolution', "Resolution:", res_list)
    local colors_props = {
       label_color = {
-         default = settings.main_color,
+         default = Util.settings.main_color,
          focused = colors.BLACK,
       },
       fill_colors = {
          default = colors.BLACK,
-         focused = settings.main_color,
+         focused = Util.settings.main_color,
          disabled = colors.BLACK,
       },
       outline_colors = {
-         default = settings.main_color,
-         focused = settings.main_color,
+         default = Util.settings.main_color,
+         focused = Util.settings.main_color,
          disabled = colors.BLACK,
       },
    }
@@ -164,12 +163,12 @@ end
 
 function GUI.draw_main_menu()
    local action = GUI.main_menu:run()
-   love.graphics.setColor(unpack(settings.main_color))
+   love.graphics.setColor(unpack(Util.settings.main_color))
    local title = love.graphics.newText(love.graphics.newFont(100), "Snakey")
    local title_w = title:getWidth()
    local title_h = title:getHeight()
    local title_x = math.ceil(Util.settings.resolution_w/2)
-   local title_y = math.ceil(Util.settings.resolution_w/6)
+   local title_y = math.ceil(133)
    local box_w = title_w+30
    local box_h = title_h+20
    local box_x = title_x - box_w/2
@@ -178,7 +177,7 @@ function GUI.draw_main_menu()
    love.graphics.rectangle("line", box_x, box_y, box_w, box_h)
    love.graphics.setColor(unpack(colors.BLACK))
    love.graphics.rectangle("fill", box_x, box_y, box_w, box_h)
-   love.graphics.setColor(unpack(settings.main_color))
+   love.graphics.setColor(unpack(Util.settings.main_color))
    love.graphics.draw(title, title_x, title_y, nil, nil, nil, title_w/2, title_h/2)
    return action
 end
