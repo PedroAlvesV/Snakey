@@ -17,6 +17,22 @@ Util.colors = {
    PINK     = {255,0,127},
 }
 
+Util.game_pallete = {
+   {"WHITE", "White"},
+   {"GRAY", "Gray"},
+   {"RED", "Red"},
+   {"ORANGE", "Orange"},
+   {"YELLOW", "Yellow"},
+   {"LIME", "Lime"},
+   {"GREEN", "Green"},
+   {"CYAN", "Cyan"},
+   {"LBLUE", "Light Blue"},
+   {"DBLUE", "Dark Blue"},
+   {"PURPLE", "Purple"},
+   {"MAGENTA", "Magenta"},
+   {"PINK", "Pink"},
+}
+
 Util.actions = {
    PASSTHROUGH = 0,
    HANDLED = -2,
@@ -69,7 +85,16 @@ Util.settings = {
    fullscreen = false,
 }
 
-function Util.apply_settings(functions)
+function Util.apply_settings(data, functions)
+   local selected_color
+   for i, value in ipairs(Util.game_pallete) do
+      if data.sl_color.option == value[2] then
+         selected_color = value[1]
+         break
+      end
+   end
+   Util.settings.main_color = Util.colors[selected_color]
+   Util.settings.fullscreen = data.chk_fullscreen
    love.window.setFullscreen(Util.settings.fullscreen)
    Util.settings.resolution_w, Util.settings.resolution_h = love.window.getMode()
    for name, func in pairs(functions) do

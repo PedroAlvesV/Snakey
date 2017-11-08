@@ -545,14 +545,14 @@ function CheckBox:process_key(key)
    return actions.PASSTHROUGH
 end
 
-function Selector.new(title, list, default_color, disabled_color, callback)
+function Selector.new(title, list, default_value, default_color, disabled_color, callback)
    local self = {
       title = title,
       list = list,
       focusable = true,
       default_color = default_color or colors.WHITE,
       disabled_color = disabled_color or colors.GRAY,
-      selected = 1,
+      selected = default_value or 1,
       gap = 12,
       callback = callback,
       enabled = true,
@@ -562,7 +562,7 @@ function Selector.new(title, list, default_color, disabled_color, callback)
 end
 
 function Selector:draw(x, y, focus)
-   local delimiter = {' ',' '}
+   local delimiter = {'I','I'}
    if focus then
       delimiter = {'‹','›'}
    end
@@ -650,8 +650,8 @@ function Menu:add_checkbox(id, label, properties, callback)
    create_widget(self, 'CHECKBOX', CheckBox, id, label, properties, callback)
 end
 
-function Menu:add_selector(id, title, list, default_color, disabled_color, callback)
-   create_widget(self, 'SELECTOR', Selector, id, title, list, default_color, disabled_color, callback)
+function Menu:add_selector(id, title, list, default_value, default_color, disabled_color, callback)
+   create_widget(self, 'SELECTOR', Selector, id, title, list, default_value, default_color, disabled_color, callback)
 end
 
 function Menu:add_implicit_button(callback)
@@ -811,9 +811,9 @@ function Menu:get_value(id, index)
             return item.widget.checklist[index].label, item.widget.checklist[index].state
          elseif item.type == 'SELECTOR' then
             local list = item.widget.list
-            for i, button in ipairs(list) do
-               if i == item.widget.selected then
-                  return button
+            for index, option in ipairs(list) do
+               if index == item.widget.selected then
+                  return index, option
                end
             end
          end
@@ -838,6 +838,9 @@ function Menu:get_data()
       if item.type == 'CHECKBOX' then
          local _, v = self:get_value(item.id)
          value = v
+      elseif item.type == 'SELECTOR' then
+         local index, option = self:get_value(item.id)
+         value = {index = index, option = option}
       end
       data[item.id] = value
    end
@@ -873,7 +876,7 @@ function Menu:run(implicit_callback)
    if self.focus == 0 then
       local function apply_focus()
          for i, item in ipairs(self.widgets) do
-            if item.widget.focusable then
+            if item.widget.focusable and item.widget.enabled then
                self.focus = i
                return true
             end

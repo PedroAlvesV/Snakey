@@ -125,38 +125,61 @@ function GUI.create_functions.options_menu(x, y, w, h)
    local options_menu = menu.new_menu(x, y, w, h)
    local properties = {font = love.graphics.newFont(50), color = Util.settings.main_color, underline = true}
    options_menu:add_label('title', "Options", properties)
-   local colors_list = {"White", "Red", "Orange", "Yellow", "Lime", "Green",
-      "Cyan", "Light Blue", "Dark Blue", "Purple", "Magenta", "Pink"}
-   options_menu:add_selector('sl_color', "Color scheme:", colors_list)
-   options_menu:add_checkbox('chk_fullscreen', "Fullscreen", {box_align = 'right', state = Util.settings.fullscreen})
    local res_list = {"800 x 600", "1024 x 768", "1366 x 768"}
-   options_menu:add_selector('sl_resolution', "Resolution:", res_list)
-   local colors_props = {
-      label_color = {
-         default = Util.settings.main_color,
-         focused = colors.BLACK,
-      },
-      fill_colors = {
-         default = colors.BLACK,
-         focused = Util.settings.main_color,
-         disabled = colors.BLACK,
-      },
-      outline_colors = {
-         default = Util.settings.main_color,
-         focused = Util.settings.main_color,
-         disabled = colors.BLACK,
-      },
-   }
+   options_menu:add_selector('sl_resolution', "Resolution:", res_list, 1, Util.settings.main_color)
+   options_menu:add_checkbox('chk_fullscreen', "Fullscreen",
+      {
+         box_align = 'right',
+         state = Util.settings.fullscreen,
+         text_colors = {
+            default = Util.settings.main_color,
+            focused = Util.settings.main_color,
+         },
+         fill_box_colors = {
+            default = Util.settings.main_color,
+            focused = Util.settings.main_color,
+            disabled = Util.settings.main_color,
+         },
+         outline_box_colors = { focused = Util.settings.main_color },
+      }
+   )
+   local colors_list = {}
+   for i, value in ipairs(Util.game_pallete) do
+      colors_list[i] = value[2]
+   end
+   local selected_color_index = 1
+   for i, value in ipairs(Util.game_pallete) do
+      if Util.settings.main_color == Util.colors[value[1]] then
+         selected_color_index = i
+         break
+      end
+   end
+   options_menu:add_selector('sl_color', "Color scheme:", colors_list, selected_color_index, Util.settings.main_color)
    local function go_back()
       -- TODO change settings values
       local data = options_menu:get_data()
       --for k,v in pairs(data) do print(k,v) end
-      Util.settings.fullscreen = data.chk_fullscreen
-      Util.apply_settings(GUI.create_functions)
+      Util.apply_settings(data, GUI.create_functions)
       Util.current_screen = Util.screens.on_main
    end
-   options_menu:add_button('b_back', "Back", colors_props, go_back)
-   options_menu:set_focus(2)
+   options_menu:add_button('b_back', "Back",
+      {
+         label_color = {
+            default = Util.settings.main_color,
+            focused = colors.BLACK,
+         },
+         fill_colors = {
+            default = colors.BLACK,
+            focused = Util.settings.main_color,
+            disabled = colors.BLACK,
+         },
+         outline_colors = {
+            default = Util.settings.main_color,
+            focused = Util.settings.main_color,
+            disabled = colors.BLACK,
+         },
+      },
+      go_back)
    GUI.options_menu = options_menu
    return GUI.options_menu
 end
