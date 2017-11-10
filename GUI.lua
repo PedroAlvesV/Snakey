@@ -162,9 +162,7 @@ function GUI.create_functions.options_menu()
    end
    options_menu:add_selector('sl_color', "Color scheme:", colors_list, selected_color_index, Util.settings.main_color)
    local function go_back()
-      -- TODO change settings values
       local data = options_menu:get_data()
-      --for k,v in pairs(data) do print(k,v) end
       Util.apply_settings(data, GUI.create_functions)
       Util.current_screen = Util.screens.on_main
    end

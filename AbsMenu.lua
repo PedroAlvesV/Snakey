@@ -860,9 +860,6 @@ function Menu:process_key(key)
       end
       return actions.HANDLED
    end
-   for i=1, #self.widgets do
-      for k,v in pairs(self.widgets[i]) do print(i,k,v) end
-   end
    local widget = self.widgets[self.focus].widget
    local motion = widget:process_key(key)
    if motion == actions.PASSTHROUGH then
