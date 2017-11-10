@@ -191,14 +191,18 @@ end
 
 function GUI.create_functions.ranking_menu(x, y, w, h)
    local ranking_menu = menu.new_menu(x, y, w, h)
-   ranking_menu:add_label('title', "Ranking", {font = love.graphics.newFont(50), underline = true})
+   ranking_menu:add_label('title', "Ranking", {
+         color = Util.settings.main_color,
+         font = love.graphics.newFont(50),
+         underline = true
+      })
    local ranking_table = { -- test
       {nick = "AAA", score = 999},
       {nick = "BBB", score = 777},
       {nick = "CCC", score = 555},
    }
    for i, el in ipairs(ranking_table) do
-      ranking_menu:add_label('n'..i, i..'. '..el.nick.."\t\t\t"..el.score.." pts.")
+      ranking_menu:add_label('n'..i, i..'. '..el.nick.."\t\t\t"..el.score.." pts.", {color = Util.settings.main_color})
    end
    ranking_menu:add_button('bt_back', "Back", {
          label_color = {
