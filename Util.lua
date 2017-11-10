@@ -83,7 +83,10 @@ Util.settings = {
    resolution_w = Util.w,
    resolution_h = Util.h,
    fullscreen = false,
+   volume = 5,
 }
+
+love.audio.setVolume(Util.settings.volume/10)
 
 function Util.apply_settings(data, functions)
    local selected_color
@@ -97,6 +100,8 @@ function Util.apply_settings(data, functions)
    Util.settings.fullscreen = data.chk_fullscreen
    love.window.setFullscreen(Util.settings.fullscreen)
    Util.settings.resolution_w, Util.settings.resolution_h = love.window.getMode()
+   Util.settings.volume = data.sl_volume.option
+   love.audio.setVolume(Util.settings.volume/10)
    for _, func in pairs(functions) do
       func()
    end

@@ -161,6 +161,9 @@ function GUI.create_functions.options_menu()
       end
    end
    options_menu:add_selector('sl_color', "Color scheme:", colors_list, selected_color_index, Util.settings.main_color)
+   local volume_table = {}
+   for i=1, 11 do volume_table[i] = i-1 end
+   options_menu:add_selector('sl_volume', "Volume:", volume_table, Util.settings.volume+1, Util.settings.main_color)
    local function go_back()
       local data = options_menu:get_data()
       Util.apply_settings(data, GUI.create_functions)
