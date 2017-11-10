@@ -860,6 +860,9 @@ function Menu:process_key(key)
       end
       return actions.HANDLED
    end
+   for i=1, #self.widgets do
+      for k,v in pairs(self.widgets[i]) do print(i,k,v) end
+   end
    local widget = self.widgets[self.focus].widget
    local motion = widget:process_key(key)
    if motion == actions.PASSTHROUGH then
@@ -876,7 +879,7 @@ function Menu:run(implicit_callback)
    if self.focus == 0 then
       local function apply_focus()
          for i, item in ipairs(self.widgets) do
-            if item.widget.focusable and item.widget.enabled then
+            if (item.widget.focusable and item.widget.enabled) or item.id == IMPLICIT_BUTTON_ID then
                self.focus = i
                return true
             end
