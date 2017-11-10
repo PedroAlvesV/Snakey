@@ -205,9 +205,10 @@ local function run(field)
 end
 
 function engine.start()
-   GUI.create_functions.main_menu(0, 200, settings.resolution_w, settings.resolution_h-200, reset_game)
+   GUI.create_functions.main_menu(0, 200, settings.resolution_w, settings.resolution_h-200)
    GUI.create_functions.pause_menu(0, 0, settings.resolution_w, settings.resolution_h)
    GUI.create_functions.options_menu(0, 0, settings.resolution_w, settings.resolution_h)
+   Util.reset_game = reset_game
    reset_game()
 end
 

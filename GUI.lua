@@ -41,7 +41,7 @@ function GUI.draw_field(x, y, w, h, field)
    end
 end
 
-function GUI.create_functions.main_menu(x, y, w, h, reset_game)
+function GUI.create_functions.main_menu(x, y, w, h)
    local main_menu = menu.new_menu(x, y, w, h)
    local colors_props = {
       label_color = {
@@ -60,7 +60,7 @@ function GUI.create_functions.main_menu(x, y, w, h, reset_game)
       },
    }
    local function singleplr_func()
-      reset_game()
+      Util.reset_game()
       Util.current_screen = Util.screens.on_singleplayer_game
    end
    local function goto_options()

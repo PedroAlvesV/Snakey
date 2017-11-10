@@ -99,7 +99,7 @@ function Util.apply_settings(data, functions)
    Util.settings.resolution_w, Util.settings.resolution_h = love.window.getMode()
    for name, func in pairs(functions) do
       if name == 'main_menu' then
-         func(0, 200, Util.settings.resolution_w, Util.settings.resolution_h-200, reset_game)
+         func(0, 200, Util.settings.resolution_w, Util.settings.resolution_h-200)
       else
          func(0, 0, Util.settings.resolution_w, Util.settings.resolution_h)
       end
