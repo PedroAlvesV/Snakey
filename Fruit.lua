@@ -6,10 +6,7 @@ function Fruit.new(x, y)
       y = y,
       effect = love.math.random(10),
    }
-   local mt = {
-      __index = Fruit,
-   }
-   setmetatable(self, mt)
+   setmetatable(self, { __index = Fruit })
    return self
 end
 

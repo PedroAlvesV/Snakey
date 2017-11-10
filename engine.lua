@@ -71,7 +71,6 @@ local function reset_game(gamemode)
       field[segment.x][segment.y] = true
    end
 
-   -- plays start tune
    if not Util.control_vars.is_mute then
       sfx.inicio:play()
    end
@@ -179,6 +178,7 @@ local function game_mechanics()
    elseif Util.current_screen == Util.screens.on_multiplayer_game then
       -- TODO
    end
+   
 end
 
 local function run(field)
@@ -187,7 +187,7 @@ local function run(field)
    elseif Util.current_screen == Util.screens.on_pause then
       return GUI.draw_pause_menu()
    elseif Util.current_screen == Util.screens.on_death then
-      return GUI.draw_death_menu(settings.resolution_w, settings.resolution_h)
+      return GUI.draw_death_menu()
    elseif Util.current_screen == Util.screens.on_singleplayer_game then
       GUI.draw_HUD(0, 0, Util.score)
       GUI.draw_field(0, Util.hud_height, settings.resolution_w, settings.resolution_h-Util.hud_height, field, Util.sqr_size)

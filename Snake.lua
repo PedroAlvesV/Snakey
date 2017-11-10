@@ -5,10 +5,7 @@ function Snake.new(x, y)
       segments = {},
    }
    self.segments[1] = {x = x, y = y, direction = 'right'}
-   local mt = {
-      __index = Snake,
-   }
-   setmetatable(self, mt)
+   setmetatable(self, { __index = Snake })
    return self
 end
 
@@ -31,16 +28,24 @@ function Snake:get_segments()
    return self.segments
 end
 
-function Snake:get_direction(index)
-   return self.segments[index].direction
-end
-
 function Snake:get_X(index)
    return self.segments[index].x
 end
 
 function Snake:get_Y(index)
    return self.segments[index].y
+end
+
+function Snake:get_direction(index)
+   return self.segments[index].direction
+end
+
+function Snake:set_X(index, value)
+   self.segments[index].x = value
+end
+
+function Snake:set_Y(index, value)
+   self.segments[index].y = value
 end
 
 function Snake:set_direction(index, new_direction)
@@ -73,14 +78,6 @@ function Snake:set_direction(index, new_direction)
       self.segments[index].direction = original_direction
    end
    
-end
-
-function Snake:set_X(index, value)
-   self.segments[index].x = value
-end
-
-function Snake:set_Y(index, value)
-   self.segments[index].y = value
 end
 
 return Snake

@@ -11,14 +11,6 @@ local control_vars = Util.control_vars
 GUI.main_color = Util.settings.main_color
 GUI.create_functions = {}
 
-function GUI.random_color()
-   local keyset = {}
-   for k in pairs(colors) do
-      table.insert(keyset, k)
-   end
-   return colors[keyset[love.math.random(#keyset)]]
-end
-
 function GUI.draw_HUD(x, y, score)
    local text_h = Util.hud_height*0.95
    local score_text = love.graphics.newText(love.graphics.newFont(text_h), "Score: "..score.." pts")
@@ -34,7 +26,7 @@ function GUI.draw_field(x, y, w, h, field)
    for i=1, Util.field_w do
       for j=1, Util.field_h do
          if field[i][j] then
-            --love.graphics.setColor(unpack(GUI.random_color()))
+            --love.graphics.setColor(unpack(Util.random_color()))
             love.graphics.rectangle("fill", (i*Util.sqr_size-Util.sqr_size)+x, (j*Util.sqr_size-Util.sqr_size)+y, Util.sqr_size, Util.sqr_size)
          end
       end
@@ -69,16 +61,15 @@ function GUI.create_functions.main_menu()
       GUI.create_functions.options_menu()
       Util.current_screen = Util.screens.on_options
    end
+   local function goto_ranking()
+      GUI.create_functions.ranking_menu()
+      Util.current_screen = Util.screens.on_ranking
+   end
    local buttons = {
       {'bt_singleplr', "Single Player", colors_props, singleplr_func},
       {'bt_multip', "Multiplayer", colors_props},
       {'bt_opts', "Options", colors_props, goto_options},
-      {'bt_ranks', "Rankings", colors_props,
-         function()
-            GUI.create_functions.ranking_menu()
-            Util.current_screen = Util.screens.on_ranking
-         end
-      },
+      {'bt_ranks', "Ranking", colors_props, goto_ranking},
       {'bt_quit', "Quit", colors_props, function() love.window.close() end},
    }
    for _, item in ipairs(buttons) do
@@ -144,7 +135,6 @@ function GUI.create_functions.options_menu()
          fill_box_colors = {
             default = Util.settings.main_color,
             focused = Util.settings.main_color,
-            disabled = Util.settings.main_color,
          },
          outline_box_colors = { focused = Util.settings.main_color },
       }
@@ -178,12 +168,10 @@ function GUI.create_functions.options_menu()
          fill_colors = {
             default = colors.BLACK,
             focused = Util.settings.main_color,
-            disabled = colors.BLACK,
          },
          outline_colors = {
             default = Util.settings.main_color,
             focused = Util.settings.main_color,
-            disabled = colors.BLACK,
          },
       },
       go_back)
@@ -196,7 +184,7 @@ function GUI.create_functions.ranking_menu()
    ranking_menu:add_label('title', "Ranking", {
          color = Util.settings.main_color,
          font = love.graphics.newFont(50),
-         underline = true
+         underline = true,
       })
    local ranking_table = { -- test
       {nick = "AAA", score = 999},
@@ -252,7 +240,7 @@ function GUI.draw_pause_menu()
    return GUI.pause_menu:run()
 end
 
-function GUI.draw_death_menu(w, h)
+function GUI.draw_death_menu()
    return GUI.death_menu:run(function() Util.current_screen = Util.screens.on_main end)
 end
 

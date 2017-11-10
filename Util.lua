@@ -1,5 +1,9 @@
 local Util = {}
 
+---------------
+-- Tables
+---------------
+
 Util.colors = {
    BLACK    = {0,0,0},
    WHITE    = {255,255,255},
@@ -33,6 +37,17 @@ Util.game_pallete = {
    {"PINK", "Pink"},
 }
 
+Util.screens = {
+   on_main = 1,
+   on_pause = 0,
+   on_death = -1,
+   on_singleplayer_game = 2,
+   on_multiplayer_setup = 3,
+   on_multiplayer_game = 4,
+   on_options = 5,
+   on_ranking = 6,
+}
+
 Util.actions = {
    PASSTHROUGH = 0,
    HANDLED = -2,
@@ -57,21 +72,11 @@ Util.keys = {
    KP_PLUS = 'kp+',
 }
 
-Util.w, Util.h = love.window.getMode()
-Util.sqr_size = 20
-Util.hud_height = 40
-Util.initial_size = 4
-Util.velocity = 0.05
-
-Util.score = 0
-
 Util.sfx = {
    ponto = love.audio.newSource("/sfx/ponto.ogg", "static"),
    toque = love.audio.newSource("/sfx/toque.ogg", "static"),
    inicio = love.audio.newSource("/sfx/inicio.ogg", "static"),
 }
-
-Util.field_w, Util.field_h = math.floor(Util.w/Util.sqr_size), math.floor((Util.h-Util.hud_height)/Util.sqr_size)
 
 Util.control_vars = {
    debug = false,
@@ -80,13 +85,29 @@ Util.control_vars = {
 
 Util.settings = {
    main_color = Util.colors.WHITE,
-   resolution_w = Util.w,
-   resolution_h = Util.h,
    fullscreen = false,
    volume = 5,
 }
 
+---------------
+-- Values
+---------------
+
+Util.settings.resolution_w, Util.settings.resolution_h = love.window.getMode()
 love.audio.setVolume(Util.settings.volume/10)
+
+Util.sqr_size = 20
+Util.hud_height = 40
+Util.initial_size = 4
+Util.velocity = 0.05
+Util.score = 0
+
+Util.field_w = math.floor(Util.settings.resolution_w/Util.sqr_size)
+Util.field_h = math.floor((Util.settings.resolution_h-Util.hud_height)/Util.sqr_size)
+
+---------------
+-- Functions
+---------------
 
 function Util.apply_settings(data, functions)
    local selected_color
@@ -107,30 +128,30 @@ function Util.apply_settings(data, functions)
    end
 end
 
-function Util.set_main_color(color)
+function Util.valid_color(color)
    for i in ipairs(color) do
       if color[i] < 0 or color[i] > 255 or i > 4 then
          return false
       end
    end
-   Util.settings.main_color = color
    return true
+end
+
+function Util.set_main_color(color)
+   if Util.valid_color(color) then
+      Util.settings.main_color = color
+      return true
+   end
+   return false
 end
 
 function Util.get_main_color()
    return Util.settings.main_color
 end
 
-Util.screens = {
-   on_main = 1,
-   on_pause = 0,
-   on_death = -1,
-   on_singleplayer_game = 2,
-   on_multiplayer_setup = 3,
-   on_multiplayer_game = 4,
-   on_options = 5,
-   on_ranking = 6,
-}
+----------
+-- Init --
+----------
 
 Util.current_screen = Util.screens.on_main
 
