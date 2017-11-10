@@ -4,16 +4,6 @@ Snakey is a remake of the classic [_Snake_](https://en.wikipedia.org/wiki/Snake_
 
 Currently, it is in constant development, so, until the first release, don't expect it to work properly.
 
-## Todo
-
-* Create missing menu widgets
-* Add missing menus
-* Add borderless field option
-* Add special fruits
-* Add local ranking
-* Add better sfx
-* Add multiplayer
-
 ## Contributing
 
 1. Create an issue and describe your contribution
