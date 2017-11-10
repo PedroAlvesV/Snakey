@@ -68,16 +68,16 @@ function GUI.create_functions.main_menu(x, y, w, h, reset_game)
       Util.current_screen = Util.screens.on_options
    end
    local buttons = {
-      {'b_singleplr', "Single Player", colors_props, singleplr_func},
-      {'b_multip', "Multiplayer", colors_props},
-      {'b_opts', "Options", colors_props, goto_options},
-      {'b_ranks', "Rankings", colors_props,
+      {'bt_singleplr', "Single Player", colors_props, singleplr_func},
+      {'bt_multip', "Multiplayer", colors_props},
+      {'bt_opts', "Options", colors_props, goto_options},
+      {'bt_ranks', "Rankings", colors_props,
          function()
             GUI.create_functions.ranking_menu(0, 0, Util.settings.resolution_w, Util.settings.resolution_h)
             Util.current_screen = Util.screens.on_ranking
          end
       },
-      {'b_quit', "Quit", colors_props, function() love.window.close() end},
+      {'bt_quit', "Quit", colors_props, function() love.window.close() end},
    }
    for _, item in ipairs(buttons) do
       main_menu:add_button(unpack(item))
@@ -106,8 +106,8 @@ function GUI.create_functions.pause_menu(x, y, w, h)
       },
    }
    local buttons = {
-      {'b_resume', "Resume", colors_props, function() Util.current_screen = Util.screens.on_singleplayer_game end},
-      {'b_quit', "Quit", colors_props, function() Util.current_screen = Util.screens.on_death end},
+      {'bt_resume', "Resume", colors_props, function() Util.current_screen = Util.screens.on_singleplayer_game end},
+      {'bt_quit', "Quit", colors_props, function() Util.current_screen = Util.screens.on_death end},
    }
    for _, item in ipairs(buttons) do
       pause_menu:add_button(unpack(item))
@@ -167,7 +167,7 @@ function GUI.create_functions.options_menu(x, y, w, h)
       Util.apply_settings(data, GUI.create_functions)
       Util.current_screen = Util.screens.on_main
    end
-   options_menu:add_button('b_back', "Back",
+   options_menu:add_button('bt_back', "Back",
       {
          label_color = {
             default = Util.settings.main_color,
@@ -243,13 +243,11 @@ function GUI.draw_main_menu()
 end
 
 function GUI.draw_pause_menu()
-   local action = GUI.pause_menu:run()
-   return action
+   return GUI.pause_menu:run()
 end
 
 function GUI.draw_death_menu(w, h)
-   local action = GUI.death_menu:run(function() Util.current_screen = Util.screens.on_main end)
-   return action
+   return GUI.death_menu:run(function() Util.current_screen = Util.screens.on_main end)
 end
 
 function GUI.draw_options_menu()
