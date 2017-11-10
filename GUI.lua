@@ -41,8 +41,9 @@ function GUI.draw_field(x, y, w, h, field)
    end
 end
 
-function GUI.create_functions.main_menu(x, y, w, h)
-   local main_menu = menu.new_menu(x, y, w, h)
+function GUI.create_functions.main_menu()
+   local shift = 200
+   local main_menu = menu.new_menu(0, shift, Util.settings.resolution_w, Util.settings.resolution_h-shift)
    local colors_props = {
       label_color = {
          default = Util.settings.main_color,
@@ -64,7 +65,7 @@ function GUI.create_functions.main_menu(x, y, w, h)
       Util.current_screen = Util.screens.on_singleplayer_game
    end
    local function goto_options()
-      GUI.create_functions.options_menu(0, 0, Util.settings.resolution_w, Util.settings.resolution_h)
+      GUI.create_functions.options_menu()
       Util.current_screen = Util.screens.on_options
    end
    local buttons = {
@@ -73,7 +74,7 @@ function GUI.create_functions.main_menu(x, y, w, h)
       {'bt_opts', "Options", colors_props, goto_options},
       {'bt_ranks', "Rankings", colors_props,
          function()
-            GUI.create_functions.ranking_menu(0, 0, Util.settings.resolution_w, Util.settings.resolution_h)
+            GUI.create_functions.ranking_menu()
             Util.current_screen = Util.screens.on_ranking
          end
       },
@@ -86,8 +87,8 @@ function GUI.create_functions.main_menu(x, y, w, h)
    return GUI.main_menu
 end
 
-function GUI.create_functions.pause_menu(x, y, w, h)
-   local pause_menu = menu.new_menu(x, y, w, h)
+function GUI.create_functions.pause_menu()
+   local pause_menu = menu.new_menu(0, 0, Util.settings.resolution_w, Util.settings.resolution_h)
    pause_menu:add_label('title', "Pause", {font = love.graphics.newFont(100), color = Util.settings.main_color, underline = true})
    local colors_props = {
       label_color = {
@@ -117,8 +118,8 @@ function GUI.create_functions.pause_menu(x, y, w, h)
    return GUI.pause_menu
 end
 
-function GUI.create_functions.death_menu(x, y, w, h)
-   local death_menu = menu.new_menu(x, y, w, h)
+function GUI.create_functions.death_menu()
+   local death_menu = menu.new_menu(0, 0, Util.settings.resolution_w, Util.settings.resolution_h)
    local properties = {font = love.graphics.newFont(50), color = Util.settings.main_color}
    death_menu:add_label('title', "Game Over", properties)
    death_menu:add_label('score', "Your score: "..Util.score.." pts", {color = Util.settings.main_color})
@@ -126,8 +127,8 @@ function GUI.create_functions.death_menu(x, y, w, h)
    return GUI.death_menu
 end
 
-function GUI.create_functions.options_menu(x, y, w, h)
-   local options_menu = menu.new_menu(x, y, w, h)
+function GUI.create_functions.options_menu()
+   local options_menu = menu.new_menu(0, 0, Util.settings.resolution_w, Util.settings.resolution_h)
    local properties = {font = love.graphics.newFont(50), color = Util.settings.main_color, underline = true}
    options_menu:add_label('title', "Options", properties)
    local res_list = {"800 x 600", "1024 x 768", "1366 x 768"}
@@ -189,8 +190,8 @@ function GUI.create_functions.options_menu(x, y, w, h)
    return GUI.options_menu
 end
 
-function GUI.create_functions.ranking_menu(x, y, w, h)
-   local ranking_menu = menu.new_menu(x, y, w, h)
+function GUI.create_functions.ranking_menu()
+   local ranking_menu = menu.new_menu(0, 0, Util.settings.resolution_w, Util.settings.resolution_h)
    ranking_menu:add_label('title', "Ranking", {
          color = Util.settings.main_color,
          font = love.graphics.newFont(50),

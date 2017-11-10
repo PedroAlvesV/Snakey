@@ -147,7 +147,7 @@ local function game_mechanics()
    end
 
    local function die()
-      GUI.create_functions.death_menu(0, 0, settings.resolution_w, settings.resolution_h)
+      GUI.create_functions.death_menu()
       Util.current_screen = Util.screens.on_death
       if not Util.control_vars.is_mute then
          sfx.toque:play()
@@ -205,9 +205,9 @@ local function run(field)
 end
 
 function engine.start()
-   GUI.create_functions.main_menu(0, 200, settings.resolution_w, settings.resolution_h-200)
-   GUI.create_functions.pause_menu(0, 0, settings.resolution_w, settings.resolution_h)
-   GUI.create_functions.options_menu(0, 0, settings.resolution_w, settings.resolution_h)
+   GUI.create_functions.main_menu()
+   GUI.create_functions.pause_menu()
+   GUI.create_functions.options_menu()
    Util.reset_game = reset_game
    reset_game()
 end
