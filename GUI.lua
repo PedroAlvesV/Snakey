@@ -48,6 +48,7 @@ function GUI.create_functions.main_menu()
       label_color = {
          default = Util.settings.main_color,
          focused = colors.BLACK,
+         disabled = colors.GRAY,
       },
       fill_colors = {
          default = colors.BLACK,
@@ -57,7 +58,7 @@ function GUI.create_functions.main_menu()
       outline_colors = {
          default = Util.settings.main_color,
          focused = Util.settings.main_color,
-         disabled = colors.BLACK,
+         disabled = colors.GRAY,
       },
    }
    local function singleplr_func()
@@ -83,6 +84,7 @@ function GUI.create_functions.main_menu()
    for _, item in ipairs(buttons) do
       main_menu:add_button(unpack(item))
    end
+   main_menu:set_enabled('bt_multip', false)
    GUI.main_menu = main_menu
    return GUI.main_menu
 end
@@ -98,12 +100,10 @@ function GUI.create_functions.pause_menu()
       fill_colors = {
          default = colors.BLACK,
          focused = Util.settings.main_color,
-         disabled = colors.BLACK,
       },
       outline_colors = {
          default = Util.settings.main_color,
          focused = Util.settings.main_color,
-         disabled = colors.BLACK,
       },
    }
    local buttons = {
