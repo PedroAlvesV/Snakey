@@ -128,7 +128,7 @@ Util.screens = {
    on_multiplayer_setup = 3,
    on_multiplayer_game = 4,
    on_options = 5,
-   on_rankings = 6,
+   on_ranking = 6,
 }
 
 Util.current_screen = Util.screens.on_main

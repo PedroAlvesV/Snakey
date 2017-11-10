@@ -53,9 +53,6 @@ end
 
 local function reset_game(gamemode)
 
-   GUI.create_functions.pause_menu(0, 0, settings.resolution_w, settings.resolution_h)
-
-   -- sets field
    for i=1, Util.field_w do
       field[i] = {}
       for j=1, Util.field_h do
@@ -63,7 +60,6 @@ local function reset_game(gamemode)
       end
    end
 
-   -- sets snake and fruit
    snake = Snake.new(math.ceil(Util.field_w/2), math.ceil(Util.field_h/2))
    fruit = Fruit.new(love.math.random(2, (Util.field_w)-1), love.math.random(2, (Util.field_h)-1))
    fruit = valid_fruit(snake, fruit)
@@ -79,6 +75,7 @@ local function reset_game(gamemode)
    if not Util.control_vars.is_mute then
       sfx.inicio:play()
    end
+
 end
 
 local function game_mechanics()
@@ -202,13 +199,14 @@ local function run(field)
       -- TODO
    elseif Util.current_screen == Util.screens.on_options then
       return GUI.draw_options_menu()
-   elseif Util.current_screen == Util.screens.on_rankings then
-      -- TODO
+   elseif Util.current_screen == Util.screens.on_ranking then
+      return GUI.draw_ranking_menu()
    end
 end
 
 function engine.start()
    GUI.create_functions.main_menu(0, 200, settings.resolution_w, settings.resolution_h-200, reset_game)
+   GUI.create_functions.pause_menu(0, 0, settings.resolution_w, settings.resolution_h)
    GUI.create_functions.options_menu(0, 0, settings.resolution_w, settings.resolution_h)
    reset_game()
 end

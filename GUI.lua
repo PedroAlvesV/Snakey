@@ -71,7 +71,12 @@ function GUI.create_functions.main_menu(x, y, w, h, reset_game)
       {'b_singleplr', "Single Player", colors_props, singleplr_func},
       {'b_multip', "Multiplayer", colors_props},
       {'b_opts', "Options", colors_props, goto_options},
-      {'b_ranks', "Rankings", colors_props},
+      {'b_ranks', "Rankings", colors_props,
+         function()
+            GUI.create_functions.ranking_menu(0, 0, Util.settings.resolution_w, Util.settings.resolution_h)
+            Util.current_screen = Util.screens.on_ranking
+         end
+      },
       {'b_quit', "Quit", colors_props, function() love.window.close() end},
    }
    for _, item in ipairs(buttons) do
@@ -184,6 +189,38 @@ function GUI.create_functions.options_menu(x, y, w, h)
    return GUI.options_menu
 end
 
+function GUI.create_functions.ranking_menu(x, y, w, h)
+   local ranking_menu = menu.new_menu(x, y, w, h)
+   ranking_menu:add_label('title', "Ranking", {font = love.graphics.newFont(50), underline = true})
+   local ranking_table = { -- test
+      {nick = "AAA", score = 999},
+      {nick = "BBB", score = 777},
+      {nick = "CCC", score = 555},
+   }
+   for i, el in ipairs(ranking_table) do
+      ranking_menu:add_label('n'..i, i..'. '..el.nick.."\t\t\t"..el.score.." pts.")
+   end
+   ranking_menu:add_button('bt_back', "Back", {
+         label_color = {
+            default = Util.settings.main_color,
+            focused = colors.BLACK,
+         },
+         fill_colors = {
+            default = colors.BLACK,
+            focused = Util.settings.main_color,
+            disabled = colors.BLACK,
+         },
+         outline_colors = {
+            default = Util.settings.main_color,
+            focused = Util.settings.main_color,
+            disabled = colors.BLACK,
+         },
+      },
+      function() Util.current_screen = Util.screens.on_main end)
+   GUI.ranking_menu = ranking_menu
+   return GUI.ranking_menu
+end
+
 function GUI.draw_main_menu()
    local action = GUI.main_menu:run()
    love.graphics.setColor(unpack(Util.settings.main_color))
@@ -220,6 +257,10 @@ function GUI.draw_options_menu()
    local _, is_fullscreen = GUI.options_menu:get_value('chk_fullscreen')
    GUI.options_menu:set_enabled('sl_resolution', not is_fullscreen)
    return action
+end
+
+function GUI.draw_ranking_menu()
+   return GUI.ranking_menu:run()
 end
 
 return GUI
