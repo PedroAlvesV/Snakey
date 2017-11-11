@@ -186,13 +186,9 @@ function GUI.create_functions.ranking_menu()
          font = love.graphics.newFont(50),
          underline = true,
       })
-   local ranking_table = { -- test
-      {nick = "AAA", score = 999},
-      {nick = "BBB", score = 777},
-      {nick = "CCC", score = 555},
-   }
-   for i, el in ipairs(ranking_table) do
-      ranking_menu:add_label('n'..i, i..'. '..el.nick.."\t\t\t"..el.score.." pts.", {color = Util.settings.main_color})
+   local ranking_table = Util.load_table('ranking.sav')
+   for i, entry in ipairs(ranking_table) do
+      ranking_menu:add_label('n'..i, i..'. '..entry[1].."\t\t\t"..entry[2].." pts.", {color = Util.settings.main_color})
    end
    ranking_menu:add_button('bt_back', "Back", {
          label_color = {
