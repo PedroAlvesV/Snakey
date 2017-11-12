@@ -114,6 +114,9 @@ function GUI.create_functions.death_menu()
    local properties = {font = love.graphics.newFont(50), color = Util.settings.main_color}
    death_menu:add_label('title', "Game Over", properties)
    death_menu:add_label('score', "Your score: "..Util.score.." pts", {color = Util.settings.main_color})
+   if Util.is_highscore() then
+      Util.update_ranking()
+   end
    GUI.death_menu = death_menu
    return GUI.death_menu
 end
@@ -186,9 +189,8 @@ function GUI.create_functions.ranking_menu()
          font = love.graphics.newFont(50),
          underline = true,
       })
-   local ranking_table = Util.load_table('ranking.sav')
-   for i, entry in ipairs(ranking_table) do
-      ranking_menu:add_label('n'..i, i..'. '..entry[1].."\t\t\t"..entry[2].." pts.", {color = Util.settings.main_color})
+   for i, entry in ipairs(Util.ranking) do
+      ranking_menu:add_label('n'..i, i..'. '..entry[1].."\t\t\t\t\t\t"..entry[2].." pts.", {color = Util.settings.main_color})
    end
    ranking_menu:add_button('bt_back', "Back", {
          label_color = {

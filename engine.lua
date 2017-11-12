@@ -74,7 +74,9 @@ local function reset_game(gamemode)
    if not Util.control_vars.is_mute then
       sfx.inicio:play()
    end
-
+   
+   Util.score = 0
+   
 end
 
 local function game_mechanics()

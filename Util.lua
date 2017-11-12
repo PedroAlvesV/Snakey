@@ -1,3 +1,5 @@
+require('table2file')
+
 local Util = {}
 
 ---------------
@@ -105,6 +107,8 @@ Util.score = 0
 Util.field_w = math.floor(Util.settings.resolution_w/Util.sqr_size)
 Util.field_h = math.floor((Util.settings.resolution_h-Util.hud_height)/Util.sqr_size)
 
+Util.player_name = "Pedro" -- provisory
+
 ---------------
 -- Functions
 ---------------
@@ -149,25 +153,43 @@ function Util.get_main_color()
    return Util.settings.main_color
 end
 
-function Util.load_table(filename)
-   local ftables, err = loadfile(filename)
-   if err then return _, err end
-   local tables = ftables()
-   for idx=1, #tables do
-      local tolinki = {}
-      for i, v in pairs(tables[idx]) do
-         if type(v) == "table" then
-            tables[idx][i] = tables[v[1]]
+function Util.is_highscore()
+   return Util.score >= Util.ranking[#Util.ranking][2]
+end
+
+function Util.update_ranking()
+   if Util.is_highscore() then
+      local new_score = Util.score
+      local ranking = Util.ranking
+      for pos, entry in ipairs(ranking) do
+         if new_score >= entry[2] then
+            table.insert(ranking, pos, {Util.player_name, new_score})
+            table.remove(ranking, #ranking)
+            Util.ranking = ranking
+            Util.write_ranking()
+            return true
          end
-         if type(i) == "table" and tables[i[1]] then
-            table.insert(tolinki, { i, tables[i[1]] })
-         end
-      end
-      for _, v in ipairs(tolinki) do
-         tables[idx][v[2]], tables[idx][v[1]] = tables[idx][v[1]], nil
       end
    end
-   return tables[1]
+   return false, "It wasn't highscore."
+end
+
+function Util.write_ranking()
+   return table.save(Util.ranking, 'ranking.sav')
+end
+
+function Util.read_ranking()
+   local f, inexistent = io.open('ranking.sav')
+   if inexistent then
+      local default_ranking = {}
+      for i=1, 10 do
+         default_ranking[#default_ranking+1] = {"Empty", 0}
+      end
+      table.save(default_ranking, 'ranking.sav')
+   else
+      f:close()
+   end
+   return table.load('ranking.sav')
 end
 
 ----------
@@ -175,5 +197,6 @@ end
 ----------
 
 Util.current_screen = Util.screens.on_main
+Util.ranking = Util.read_ranking()
 
 return Util
