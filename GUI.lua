@@ -234,26 +234,30 @@ function GUI.create_functions.options_menu()
    local volume_table = {}
    for i=1, 11 do volume_table[i] = i-1 end
    options_menu:add_selector('sl_volume', "Volume:", volume_table, Util.settings.volume+1, Util.settings.main_color)
-   local function go_back()
+   local function cancel_function()
+      Util.current_screen = Util.screens.on_main
+   end
+   local function apply_function()
       local data = options_menu:get_data()
       Util.apply_settings(data, GUI.create_functions)
       Util.current_screen = Util.screens.on_main
    end
-   options_menu:add_button('bt_back', "Back", {
-         label_color = {
-            default = Util.settings.main_color,
-            focused = colors.BLACK,
-         },
-         fill_colors = {
-            default = colors.BLACK,
-            focused = Util.settings.main_color,
-         },
-         outline_colors = {
-            default = Util.settings.main_color,
-            focused = Util.settings.main_color,
-         },
+   local bt_properties = {
+      label_color = {
+         default = Util.settings.main_color,
+         focused = colors.BLACK,
       },
-      go_back)
+      fill_colors = {
+         default = colors.BLACK,
+         focused = Util.settings.main_color,
+      },
+      outline_colors = {
+         default = Util.settings.main_color,
+         focused = Util.settings.main_color,
+      },
+   }
+   options_menu:add_buttongroup('btgp_apply', {"Cancel", "Apply"},
+      {bt_properties, bt_properties}, {cancel_function, apply_function})
    GUI.options_menu = options_menu
    return GUI.options_menu
 end
