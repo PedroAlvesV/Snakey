@@ -111,14 +111,18 @@ function GUI.create_functions.singleplayer_setup_menu_1()
       GUI.create_functions.singleplayer_setup_menu_2()
       Util.current_screen = Util.screens.on_singleplayer_setup_2
    end
---   singleplayer_setup_menu_1:add_buttongroup('btgp_navigation', {"Cancel", "Next"},
---      {global_button_properties, global_button_properties}, {cancel_func, goto_next})
+   singleplayer_setup_menu_1:add_buttongroup('btgp_navigation', {"Cancel", "Next"},
+      {global_button_properties, global_button_properties}, {cancel_func, goto_next})
    GUI.singleplayer_setup_menu_1 = singleplayer_setup_menu_1
    return GUI.singleplayer_setup_menu_1
 end
 
 function GUI.create_functions.singleplayer_setup_menu_2()
-   -- TODO
+   local singleplayer_setup_menu_2 = menu.new_menu(0, 0, Util.settings.resolution_w, Util.settings.resolution_h)
+   singleplayer_setup_menu_2:add_label('title', "Game Setup",
+      {font = love.graphics.newFont(50), color = Util.settings.main_color, underline = true})
+   GUI.singleplayer_setup_menu_2 = singleplayer_setup_menu_2
+   return GUI.singleplayer_setup_menu_2
 end
 
 function GUI.create_functions.multiplayer_setup_menu_1()

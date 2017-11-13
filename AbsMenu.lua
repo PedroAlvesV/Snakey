@@ -1,16 +1,14 @@
-local AbsMenu = {}
-
 local Util = require("Util")
 
 local Menu = {}
 
 local Label = {}
 local Button = {}
+local ButtonGroup = {}
+local CheckBox = {}
+local Selector = {}
 local TextInput = {}
 local TextBox = {}
-local CheckBox = {}
-local Slider = {}
-local Selector = {}
 local Implicit_Button = {}
 
 local IMPLICIT_BUTTON_ID = {}
@@ -27,7 +25,7 @@ local function run_callback(self, ...)
    end
 end
 
-function AbsMenu.new_menu(x, y, w, h)
+function Menu.new_menu(x, y, w, h)
    local self = {
       x = x,
       y = y,
@@ -136,34 +134,53 @@ function Button:process_key(key)
    return actions.PASSTHROUGH
 end
 
-function TextInput.new(label, default_value, properties, callback)
+function ButtonGroup.new(labels, properties, callbacks)
+   local buttons = {}
+   for i, label in ipairs(labels) do
+      table.insert(buttons, Button.new(label, properties[i], callbacks[i]))
+   end
    local self = {
-      -- TODO
+      buttons = buttons,
+      subfocus = 1,
+      focusable = true,
+      enabled = true,
    }
-   return setmetatable(self, { __index = TextInput })
+   return setmetatable(self, { __index = ButtonGroup })
 end
 
-function TextInput:draw(x, y, focus)
-   -- TODO
+function ButtonGroup:draw(x, y, focus)
+   for i, button in ipairs(self.buttons) do
+      x = i * (Util.settings.resolution_w/(#self.buttons+1))
+      button:draw(x, y, focus and i == self.subfocus)
+   end
 end
 
-function TextInput:process_key(key)
-   -- TODO
-end
-
-function TextBox.new(title, default_value, callback)
-   local self = {
-      -- TODO
-   }
-   return setmetatable(self, { __index = TextBox })
-end
-
-function TextBox:draw(x, y, focus)
-   -- TODO
-end
-
-function TextBox:process_key(key)
-   -- TODO
+function ButtonGroup:process_key(key)
+   local function move_focus(direction)
+      local button = self.buttons[self.subfocus]
+      local next_focus = self.subfocus + direction
+      while true do
+         if next_focus < 1 or next_focus > #self.buttons then
+            return actions.HANDLED
+         end
+         if self.buttons[next_focus].focusable then
+            break
+         end
+         next_focus = next_focus + direction
+      end
+      self.subfocus = next_focus
+      return actions.HANDLED
+   end
+   if key == keys.LEFT then
+      return move_focus(-1)
+   elseif key == keys.RIGHT then
+      return move_focus(1)
+   elseif key == keys.UP then
+      return actions.PREVIOUS
+   elseif key == keys.DOWN then
+      return actions.NEXT
+   end
+   return self.buttons[self.subfocus]:process_key(key, self.subfocus)
 end
 
 function CheckBox.new(label, properties, callback)
@@ -312,6 +329,36 @@ function Selector:process_key(key)
    return actions.PASSTHROUGH
 end
 
+function TextInput.new(label, default_value, properties, callback)
+   local self = {
+      -- TODO
+   }
+   return setmetatable(self, { __index = TextInput })
+end
+
+function TextInput:draw(x, y, focus)
+   -- TODO
+end
+
+function TextInput:process_key(key)
+   -- TODO
+end
+
+function TextBox.new(title, default_value, callback)
+   local self = {
+      -- TODO
+   }
+   return setmetatable(self, { __index = TextBox })
+end
+
+function TextBox:draw(x, y, focus)
+   -- TODO
+end
+
+function TextBox:process_key(key)
+   -- TODO
+end
+
 function Implicit_Button.new(callback)
    local self = {
       callback = callback,
@@ -349,12 +396,8 @@ function Menu:add_button(id, label, properties, callback)
    create_widget(self, 'BUTTON', Button, id, label, properties, callback)
 end
 
-function Menu:add_text_input(id, label, visibility, default_value, callback)
-   create_widget(self, 'TEXT_INPUT', TextInput, id, label, visibility, default_value, callback)
-end
-
-function Menu:add_textbox(id, title, default_value, callback)
-   create_widget(self, 'TEXTBOX', TextBox, id, title, default_value, callback)
+function Menu:add_buttongroup(id, labels, properties, callbacks)
+   create_widget(self, 'BUTTONGROUP', ButtonGroup, id, labels, properties, callbacks)
 end
 
 function Menu:add_checkbox(id, label, properties, callback)
@@ -363,6 +406,14 @@ end
 
 function Menu:add_selector(id, title, list, default_value, default_color, disabled_color, callback)
    create_widget(self, 'SELECTOR', Selector, id, title, list, default_value, default_color, disabled_color, callback)
+end
+
+function Menu:add_text_input(id, label, visibility, default_value, callback)
+   create_widget(self, 'TEXT_INPUT', TextInput, id, label, visibility, default_value, callback)
+end
+
+function Menu:add_textbox(id, title, default_value, callback)
+   create_widget(self, 'TEXTBOX', TextBox, id, title, default_value, callback)
 end
 
 function Menu:add_implicit_button(callback)
@@ -382,7 +433,6 @@ function Menu:set_background_color(color)
 end
 
 function Menu:set_enabled(id, bool)
-   -- MUST EDIT
    for _, item in ipairs(self.widgets) do
       if item.id == id then
          local widget = item.widget
@@ -532,4 +582,4 @@ function Menu:run(implicit_callback)
    end
 end
 
-return AbsMenu
+return Menu

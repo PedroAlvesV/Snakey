@@ -191,16 +191,16 @@ local function run()
    elseif Util.current_screen == Util.screens.on_singleplayer_setup_1 then
       return GUI.draw_singleplayer_setup_menu_1()
    elseif Util.current_screen == Util.screens.on_singleplayer_setup_2 then
-      -- TODO
+      return GUI.draw_singleplayer_setup_menu_2()
    elseif Util.current_screen == Util.screens.on_singleplayer_game then
       GUI.draw_HUD(0, 0, Util.score)
       GUI.draw_field(0, Util.hud_height, settings.resolution_w, settings.resolution_h-Util.hud_height, field, Util.sqr_size)
       game_mechanics()
       return actions.PASSTHROUGH
    elseif Util.current_screen == Util.screens.on_multiplayer_setup_1 then
-      -- TODO
+      return GUI.draw_multiplayer_setup_menu_1()
    elseif Util.current_screen == Util.screens.on_multiplayer_setup_2 then
-      -- TODO
+      return GUI.draw_multiplayer_setup_menu_2()
    elseif Util.current_screen == Util.screens.on_multiplayer_game then
       -- TODO
    elseif Util.current_screen == Util.screens.on_pause then
