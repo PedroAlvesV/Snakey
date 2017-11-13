@@ -154,7 +154,7 @@ function Util.get_main_color()
 end
 
 function Util.is_highscore()
-   return Util.score >= Util.ranking[#Util.ranking][2]
+   return (Util.score >= Util.ranking[#Util.ranking][2]) and (Util.score > 0)
 end
 
 function Util.update_ranking()

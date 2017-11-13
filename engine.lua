@@ -183,7 +183,7 @@ local function game_mechanics()
    
 end
 
-local function run(field)
+local function run()
    if Util.current_screen == Util.screens.on_main then
       return GUI.draw_main_menu()
    elseif Util.current_screen == Util.screens.on_pause then
@@ -215,7 +215,7 @@ function engine.start()
 end
 
 function love.draw()
-   local action, key = run(field)
+   local action, key = run()
    if Util.current_screen == Util.screens.on_singleplayer_game then
       function love.keypressed(key)
          if key then

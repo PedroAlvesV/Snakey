@@ -11,15 +11,13 @@ local control_vars = Util.control_vars
 GUI.main_color = Util.settings.main_color
 GUI.create_functions = {}
 
-function GUI.draw_HUD(x, y, score)
+function GUI.draw_HUD(x, y)
    local text_h = Util.hud_height*0.95
-   local score_text = love.graphics.newText(love.graphics.newFont(text_h), "Score: "..score.." pts")
+   local name_text = love.graphics.newText(love.graphics.newFont(text_h), Util.player_name)
+   local score_text = love.graphics.newText(love.graphics.newFont(text_h), "Score: "..Util.score)
    love.graphics.setColor(Util.settings.main_color)
-   if control_vars.is_mute then
-      local mute_text = love.graphics.newText(love.graphics.newFont(text_h), "MUTE")
-      love.graphics.draw(mute_text, Util.settings.resolution_w-mute_text:getWidth(), y)
-   end
-   love.graphics.draw(score_text, x, y)
+   love.graphics.draw(name_text, x, y)
+   love.graphics.draw(score_text, Util.settings.resolution_w-score_text:getWidth(), y)
 end
 
 function GUI.draw_field(x, y, w, h, field)
@@ -113,10 +111,12 @@ function GUI.create_functions.death_menu()
    local death_menu = menu.new_menu(0, 0, Util.settings.resolution_w, Util.settings.resolution_h)
    local properties = {font = love.graphics.newFont(50), color = Util.settings.main_color}
    death_menu:add_label('title', "Game Over", properties)
-   death_menu:add_label('score', "Your score: "..Util.score.." pts", {color = Util.settings.main_color})
    if Util.is_highscore() then
       Util.update_ranking()
+--      death_menu:add_label('highscore', "New highscore! Congratulations, "..Util.player_name.."!",
+--         {color = Util.settings.main_color, underline = true})
    end
+   death_menu:add_label('score', "Your score: "..Util.score.." pts", {color = Util.settings.main_color})
    GUI.death_menu = death_menu
    return GUI.death_menu
 end
