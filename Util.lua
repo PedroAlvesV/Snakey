@@ -185,10 +185,9 @@ function Util.read_ranking()
       for i=1, 10 do
          default_ranking[#default_ranking+1] = {"Empty", 0}
       end
-      table.save(default_ranking, 'ranking.sav')
-   else
-      f:close()
+      return default_ranking
    end
+   f:close()
    return table.load('ranking.sav')
 end
 
