@@ -11,35 +11,6 @@ local control_vars = Util.control_vars
 GUI.main_color = Util.settings.main_color
 GUI.create_functions = {}
 
-local global_button_properties = {
-   label_color = {
-      default = Util.settings.main_color,
-      focused = colors.BLACK,
-   },
-   fill_colors = {
-      default = colors.BLACK,
-      focused = Util.settings.main_color,
-   },
-   outline_colors = {
-      default = Util.settings.main_color,
-      focused = Util.settings.main_color,
-   },
-}
-
-local global_checkbox_properties = {
-   box_align = 'right',
-   state = Util.settings.fullscreen,
-   text_colors = {
-      default = Util.settings.main_color,
-      focused = Util.settings.main_color,
-   },
-   fill_box_colors = {
-      default = Util.settings.main_color,
-      focused = Util.settings.main_color,
-   },
-   outline_box_colors = { focused = Util.settings.main_color },
-}
-
 function GUI.draw_HUD(x, y)
    local text_h = Util.hud_height*0.95
    local name_text = love.graphics.newText(love.graphics.newFont(text_h), Util.player_name)
@@ -63,7 +34,20 @@ end
 function GUI.create_functions.main_menu()
    local shift = 200
    local main_menu = menu.new_menu(0, shift, Util.settings.resolution_w, Util.settings.resolution_h-shift)
-   local colors_props = global_button_properties
+   local colors_props = {
+      label_color = {
+         default = Util.settings.main_color,
+         focused = colors.BLACK,
+      },
+      fill_colors = {
+         default = colors.BLACK,
+         focused = Util.settings.main_color,
+      },
+      outline_colors = {
+         default = Util.settings.main_color,
+         focused = Util.settings.main_color,
+      },
+   }
    colors_props.label_color.disabled = colors.GRAY
    colors_props.fill_colors.disabled = colors.BLACK
    colors_props.outline_colors.disabled = colors.GRAY
@@ -100,7 +84,18 @@ function GUI.create_functions.singleplayer_setup_menu_1()
    local singleplayer_setup_menu_1 = menu.new_menu(0, 0, Util.settings.resolution_w, Util.settings.resolution_h)
    singleplayer_setup_menu_1:add_label('title', "Game Setup",
       {font = love.graphics.newFont(50), color = Util.settings.main_color, underline = true})
-   singleplayer_setup_menu_1:add_checkbox('chk_borderless', "Borderless field", global_checkbox_properties)
+   singleplayer_setup_menu_1:add_checkbox('chk_borderless', "Borderless field", {
+         box_align = 'right',
+         text_colors = {
+            default = Util.settings.main_color,
+            focused = Util.settings.main_color,
+         },
+         fill_box_colors = {
+            default = Util.settings.main_color,
+            focused = Util.settings.main_color,
+         },
+         outline_box_colors = { focused = Util.settings.main_color },
+      })
    singleplayer_setup_menu_1:add_selector('sl_size', "Field size:", {"Small", "Medium", "Large"}, 2, Util.settings.main_color)
    singleplayer_setup_menu_1:add_selector('sl_velocity', "Speed:", {"Slow", "Regular", "Quick"}, 2, Util.settings.main_color)
    local cancel_func = function()
@@ -111,8 +106,22 @@ function GUI.create_functions.singleplayer_setup_menu_1()
       GUI.create_functions.singleplayer_setup_menu_2()
       Util.current_screen = Util.screens.on_singleplayer_setup_2
    end
+   local bt_properties = {
+      label_color = {
+         default = Util.settings.main_color,
+         focused = colors.BLACK,
+      },
+      fill_colors = {
+         default = colors.BLACK,
+         focused = Util.settings.main_color,
+      },
+      outline_colors = {
+         default = Util.settings.main_color,
+         focused = Util.settings.main_color,
+      },
+   }
    singleplayer_setup_menu_1:add_buttongroup('btgp_navigation', {"Cancel", "Next"},
-      {global_button_properties, global_button_properties}, {cancel_func, goto_next})
+      {bt_properties, bt_properties}, {cancel_func, goto_next})
    GUI.singleplayer_setup_menu_1 = singleplayer_setup_menu_1
    return GUI.singleplayer_setup_menu_1
 end
@@ -140,9 +149,23 @@ function GUI.create_functions.pause_menu()
       GUI.create_functions.death_menu()
       Util.current_screen = Util.screens.on_death
    end
+   local bt_properties = {
+      label_color = {
+         default = Util.settings.main_color,
+         focused = colors.BLACK,
+      },
+      fill_colors = {
+         default = colors.BLACK,
+         focused = Util.settings.main_color,
+      },
+      outline_colors = {
+         default = Util.settings.main_color,
+         focused = Util.settings.main_color,
+      },
+   }
    local buttons = {
-      {'bt_resume', "Resume", global_button_properties, function() Util.current_screen = Util.screens.on_singleplayer_game end},
-      {'bt_quit', "Quit", global_button_properties, quit_game},
+      {'bt_resume', "Resume", bt_properties, function() Util.current_screen = Util.screens.on_singleplayer_game end},
+      {'bt_quit', "Quit", bt_properties, quit_game},
    }
    for _, item in ipairs(buttons) do
       pause_menu:add_button(unpack(item))
@@ -169,9 +192,33 @@ function GUI.create_functions.options_menu()
    local options_menu = menu.new_menu(0, 0, Util.settings.resolution_w, Util.settings.resolution_h)
    local properties = {font = love.graphics.newFont(50), color = Util.settings.main_color, underline = true}
    options_menu:add_label('title', "Options", properties)
-   local res_list = {"800 x 600", "1024 x 768", "1366 x 768"}
-   options_menu:add_selector('sl_resolution', "Resolution:", res_list, 1, Util.settings.main_color)
-   options_menu:add_checkbox('chk_fullscreen', "Fullscreen", global_checkbox_properties )
+   local res_list = {}
+   for _, resolution in ipairs(Util.resolutions) do
+      table.insert(res_list, resolution[1].." x "..resolution[2])
+   end
+   local selected_res_index = 1
+   for i, label in ipairs(res_list) do
+      local label_resolution = label:split(" x ")
+      if tonumber(label_resolution[1]) == Util.settings.resolution_w and
+      tonumber(label_resolution[2]) == Util.settings.resolution_h then
+         selected_res_index = i
+         break
+      end
+   end
+   options_menu:add_selector('sl_resolution', "Resolution:", res_list, selected_res_index, Util.settings.main_color)
+   local chk_fullscreen_properties = {      
+      text_colors = {
+         default = Util.settings.main_color,
+         focused = Util.settings.main_color,
+      },
+      fill_box_colors = {
+         default = Util.settings.main_color,
+         focused = Util.settings.main_color,
+      },
+      outline_box_colors = { focused = Util.settings.main_color },
+      state = Util.settings.fullscreen,
+   }
+   options_menu:add_checkbox('chk_fullscreen', "Fullscreen", chk_fullscreen_properties)
    local colors_list = {}
    for i, value in ipairs(Util.game_pallete) do
       colors_list[i] = value[2]
@@ -192,7 +239,21 @@ function GUI.create_functions.options_menu()
       Util.apply_settings(data, GUI.create_functions)
       Util.current_screen = Util.screens.on_main
    end
-   options_menu:add_button('bt_back', "Back", global_button_properties, go_back)
+   options_menu:add_button('bt_back', "Back", {
+         label_color = {
+            default = Util.settings.main_color,
+            focused = colors.BLACK,
+         },
+         fill_colors = {
+            default = colors.BLACK,
+            focused = Util.settings.main_color,
+         },
+         outline_colors = {
+            default = Util.settings.main_color,
+            focused = Util.settings.main_color,
+         },
+      },
+      go_back)
    GUI.options_menu = options_menu
    return GUI.options_menu
 end
@@ -207,7 +268,21 @@ function GUI.create_functions.ranking_menu()
    for i, entry in ipairs(Util.ranking) do
       ranking_menu:add_label('n'..i, i..'. '..entry[1].."\t\t\t\t\t\t"..entry[2].." pts.", {color = Util.settings.main_color})
    end
-   ranking_menu:add_button('bt_back', "Back", global_button_properties, function() Util.current_screen = Util.screens.on_main end)
+   ranking_menu:add_button('bt_back', "Back", {
+         label_color = {
+            default = Util.settings.main_color,
+            focused = colors.BLACK,
+         },
+         fill_colors = {
+            default = colors.BLACK,
+            focused = Util.settings.main_color,
+         },
+         outline_colors = {
+            default = Util.settings.main_color,
+            focused = Util.settings.main_color,
+         },
+      },
+      function() Util.current_screen = Util.screens.on_main end)
    GUI.ranking_menu = ranking_menu
    return GUI.ranking_menu
 end

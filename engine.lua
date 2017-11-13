@@ -218,7 +218,7 @@ end
 function engine.start()
    GUI.create_functions.main_menu()
    GUI.create_functions.pause_menu()
-   GUI.create_functions.options_menu()
+   --GUI.create_functions.options_menu()
    Util.reset_game = reset_game
    reset_game()
 end

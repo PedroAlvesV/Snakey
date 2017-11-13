@@ -1,13 +1,5 @@
 do
 
---   function string.split(str, delimiter)
---      local t = {}
---      for substr in str:gmatch('([^'..delimiter..']+)') do
---         t[#t+1] = substr
---      end
---      return t
---   end
-
    local function exportstring(s)
       return string.format("%q", s)
    end

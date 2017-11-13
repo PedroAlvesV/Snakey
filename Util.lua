@@ -39,6 +39,16 @@ Util.game_pallete = {
    {"PINK", "Pink"},
 }
 
+Util.resolutions = {
+   {640, 480},
+   {800, 600},
+   {1024, 768},
+   {1280, 720},
+   {1280, 768},
+   {1360, 768},
+   {1366, 768},
+}
+
 Util.screens = {
    on_main = 0,
    on_singleplayer_setup_1 = 1,
@@ -127,6 +137,10 @@ function Util.apply_settings(data, functions)
    Util.settings.main_color = Util.colors[selected_color]
    Util.settings.fullscreen = data.chk_fullscreen
    love.window.setFullscreen(Util.settings.fullscreen)
+   if not Util.settings.fullscreen then
+      love.window.setMode(Util.resolutions[data.sl_resolution.index][1],
+         Util.resolutions[data.sl_resolution.index][2])
+   end
    Util.settings.resolution_w, Util.settings.resolution_h = love.window.getMode()
    Util.settings.volume = data.sl_volume.option
    love.audio.setVolume(Util.settings.volume/10)
@@ -197,6 +211,14 @@ end
 ----------
 -- Init --
 ----------
+
+string.split = function(str, delimiter)
+   local t = {}
+   for substr in str:gmatch('([^'..delimiter..']+)') do
+      t[#t+1] = substr
+   end
+   return t
+end
 
 Util.current_screen = Util.screens.on_main
 Util.ranking = Util.read_ranking()
