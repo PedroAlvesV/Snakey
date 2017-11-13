@@ -29,6 +29,7 @@ local function handle_playing(key)
             Util.velocity = Util.velocity - 0.05
          end
       elseif key == keys.SPACE or key == keys.ESC then
+         GUI.create_functions.pause_menu()
          Util.current_screen = Util.screens.on_pause
       end
    elseif Util.current_screen == Util.screens.on_multiplayer_game then
@@ -74,9 +75,9 @@ local function reset_game(gamemode)
    if not Util.control_vars.is_mute then
       sfx.inicio:play()
    end
-   
+
    Util.score = 0
-   
+
 end
 
 local function game_mechanics()
@@ -180,30 +181,38 @@ local function game_mechanics()
    elseif Util.current_screen == Util.screens.on_multiplayer_game then
       -- TODO
    end
-   
+
 end
 
 local function run()
+   
    if Util.current_screen == Util.screens.on_main then
       return GUI.draw_main_menu()
-   elseif Util.current_screen == Util.screens.on_pause then
-      return GUI.draw_pause_menu()
-   elseif Util.current_screen == Util.screens.on_death then
-      return GUI.draw_death_menu()
+   elseif Util.current_screen == Util.screens.on_singleplayer_setup_1 then
+      return GUI.draw_singleplayer_setup_menu_1()
+   elseif Util.current_screen == Util.screens.on_singleplayer_setup_2 then
+      -- TODO
    elseif Util.current_screen == Util.screens.on_singleplayer_game then
       GUI.draw_HUD(0, 0, Util.score)
       GUI.draw_field(0, Util.hud_height, settings.resolution_w, settings.resolution_h-Util.hud_height, field, Util.sqr_size)
       game_mechanics()
       return actions.PASSTHROUGH
-   elseif Util.current_screen == Util.screens.on_multiplayer_setup then
+   elseif Util.current_screen == Util.screens.on_multiplayer_setup_1 then
+      -- TODO
+   elseif Util.current_screen == Util.screens.on_multiplayer_setup_2 then
       -- TODO
    elseif Util.current_screen == Util.screens.on_multiplayer_game then
       -- TODO
+   elseif Util.current_screen == Util.screens.on_pause then
+      return GUI.draw_pause_menu()
+   elseif Util.current_screen == Util.screens.on_death then
+      return GUI.draw_death_menu()
    elseif Util.current_screen == Util.screens.on_options then
       return GUI.draw_options_menu()
    elseif Util.current_screen == Util.screens.on_ranking then
       return GUI.draw_ranking_menu()
    end
+   
 end
 
 function engine.start()

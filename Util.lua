@@ -40,14 +40,17 @@ Util.game_pallete = {
 }
 
 Util.screens = {
-   on_main = 1,
-   on_pause = 0,
-   on_death = -1,
-   on_singleplayer_game = 2,
-   on_multiplayer_setup = 3,
-   on_multiplayer_game = 4,
-   on_options = 5,
-   on_ranking = 6,
+   on_main = 0,
+   on_singleplayer_setup_1 = 1,
+   on_singleplayer_setup_2 = 2,
+   on_singleplayer_game = 3,
+   on_multiplayer_setup_1 = 4,
+   on_multiplayer_setup_2 = 5,
+   on_multiplayer_game = 6,
+   on_pause = 7,
+   on_death = 8,
+   on_options = 9,
+   on_ranking = 10,
 }
 
 Util.actions = {
