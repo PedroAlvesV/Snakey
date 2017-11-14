@@ -295,21 +295,30 @@ function GUI.create_functions.ranking_menu()
    for i, entry in ipairs(Util.ranking) do
       ranking_menu:add_label('n'..i, i..'. '..entry[1].."\t\t\t\t\t\t"..entry[2].." pts.", {color = Util.settings.main_color})
    end
-   ranking_menu:add_button('bt_back', "Back", {
-         label_color = {
-            default = Util.settings.main_color,
-            focused = colors.BLACK,
-         },
-         fill_colors = {
-            default = colors.BLACK,
-            focused = Util.settings.main_color,
-         },
-         outline_colors = {
-            default = Util.settings.main_color,
-            focused = Util.settings.main_color,
-         },
+   local bt_properties = {
+      label_color = {
+         default = Util.settings.main_color,
+         focused = colors.BLACK,
       },
-      function() Util.current_screen = Util.screens.on_main end)
+      fill_colors = {
+         default = colors.BLACK,
+         focused = Util.settings.main_color,
+      },
+      outline_colors = {
+         default = Util.settings.main_color,
+         focused = Util.settings.main_color,
+      },
+   }
+   local function back_function()
+      Util.current_screen = Util.screens.on_main
+   end
+   local function erase_function()
+      os.remove("ranking.sav")
+      Util.ranking = Util.read_ranking()
+      back_function()
+   end
+   ranking_menu:add_buttongroup('btgp_ranking', {"Back", "Erase ranking"},
+      {bt_properties, bt_properties}, {back_function, erase_function})
    GUI.ranking_menu = ranking_menu
    return GUI.ranking_menu
 end
