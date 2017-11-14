@@ -14,18 +14,19 @@ GUI.create_functions = {}
 function GUI.draw_HUD(x, y)
    local text_h = Util.hud_height*0.95
    local name_text = love.graphics.newText(love.graphics.newFont(text_h), Util.player_name)
-   local score_text = love.graphics.newText(love.graphics.newFont(text_h), "Score: "..Util.score)
+   local score_text = love.graphics.newText(love.graphics.newFont(text_h), "Score: "..Util.game.score)
    love.graphics.setColor(Util.settings.main_color)
    love.graphics.draw(name_text, x, y)
    love.graphics.draw(score_text, Util.settings.resolution_w-score_text:getWidth(), y)
 end
 
 function GUI.draw_field(x, y, w, h, field)
+   local sqr = Util.game.sqr_size
    for i=1, Util.field_w do
       for j=1, Util.field_h do
          if field[i][j] then
             --love.graphics.setColor(unpack(Util.random_color()))
-            love.graphics.rectangle("fill", (i*Util.sqr_size-Util.sqr_size)+x, (j*Util.sqr_size-Util.sqr_size)+y, Util.sqr_size, Util.sqr_size)
+            love.graphics.rectangle("fill", (i*sqr-sqr)+x, (j*sqr-sqr)+y, sqr, sqr)
          end
       end
    end
@@ -52,8 +53,6 @@ function GUI.create_functions.main_menu()
    colors_props.fill_colors.disabled = colors.BLACK
    colors_props.outline_colors.disabled = colors.GRAY
    local function singleplr_func()
---      Util.reset_game()
---      Util.current_screen = Util.screens.on_singleplayer_game
       GUI.create_functions.singleplayer_setup_menu_1()
       Util.current_screen = Util.screens.on_singleplayer_setup_1
    end
@@ -85,7 +84,6 @@ function GUI.create_functions.singleplayer_setup_menu_1()
    singleplayer_setup_menu_1:add_label('title', "Game Setup",
       {font = love.graphics.newFont(50), color = Util.settings.main_color, underline = true})
    singleplayer_setup_menu_1:add_checkbox('chk_borderless', "Borderless field", {
-         box_align = 'right',
          text_colors = {
             default = Util.settings.main_color,
             focused = Util.settings.main_color,
@@ -96,6 +94,7 @@ function GUI.create_functions.singleplayer_setup_menu_1()
          },
          outline_box_colors = { focused = Util.settings.main_color },
       })
+   singleplayer_setup_menu_1:set_enabled('chk_borderless', false)
    singleplayer_setup_menu_1:add_selector('sl_size', "Field size:", {"Small", "Medium", "Large"}, 2, Util.settings.main_color)
    singleplayer_setup_menu_1:add_selector('sl_velocity', "Speed:", {"Slow", "Regular", "Quick"}, 2, Util.settings.main_color)
    local cancel_func = function()
@@ -103,8 +102,32 @@ function GUI.create_functions.singleplayer_setup_menu_1()
       Util.current_screen = Util.screens.on_main
    end
    local goto_next = function()
-      GUI.create_functions.singleplayer_setup_menu_2()
-      Util.current_screen = Util.screens.on_singleplayer_setup_2
+      local data = singleplayer_setup_menu_1:get_data()
+      local function apply_game_settings()
+         local sqr_size = 20
+         if data.sl_size.index == 1 then
+            sqr_size = 30
+         elseif data.sl_size.index == 3 then
+            sqr_size = 10
+         end
+         local velocity = 0.05
+         if data.sl_velocity.index == 1 then
+            velocity = 0.065
+         elseif data.sl_velocity.index == 3 then
+            velocity = 0.025
+         end
+         Util.game = {
+            sqr_size = sqr_size,
+            velocity = velocity,
+            initial_size = 4,
+            score = 0,
+         }
+      end
+      apply_game_settings()
+      Util.reset_game()
+      Util.current_screen = Util.screens.on_singleplayer_game
+      --GUI.create_functions.singleplayer_setup_menu_2()
+      --Util.current_screen = Util.screens.on_singleplayer_setup_2
    end
    local bt_properties = {
       label_color = {
@@ -183,7 +206,7 @@ function GUI.create_functions.death_menu()
 --      death_menu:add_label('highscore', "New highscore! Congratulations, "..Util.player_name.."!",
 --         {color = Util.settings.main_color, underline = true})
    end
-   death_menu:add_label('score', "Your score: "..Util.score.." pts", {color = Util.settings.main_color})
+   death_menu:add_label('score', "Your score: "..Util.game.score.." pts", {color = Util.settings.main_color})
    GUI.death_menu = death_menu
    return GUI.death_menu
 end

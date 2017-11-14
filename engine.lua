@@ -20,14 +20,14 @@ local function handle_playing(key)
       key == keys.LEFT or key == keys.A or
       key == keys.RIGHT or key == keys.D then
          snake:set_direction(1, key)
-      elseif key == keys.M then
-         Util.control_vars.is_mute = not Util.control_vars.is_mute
-      elseif key == keys.KP_MINUS then
-         Util.velocity = Util.velocity + 0.05
-      elseif key == keys.KP_PLUS then
-         if Util.velocity > 0 then
-            Util.velocity = Util.velocity - 0.05
-         end
+--      elseif key == keys.M then
+--         Util.control_vars.is_mute = not Util.control_vars.is_mute
+--      elseif key == keys.KP_MINUS then
+--         Util.velocity = Util.velocity + 0.05
+--      elseif key == keys.KP_PLUS then
+--         if Util.velocity > 0 then
+--            Util.velocity = Util.velocity - 0.05
+--         end
       elseif key == keys.SPACE or key == keys.ESC then
          GUI.create_functions.pause_menu()
          Util.current_screen = Util.screens.on_pause
@@ -54,6 +54,9 @@ end
 
 local function reset_game(gamemode)
 
+   Util.field_w = math.floor(Util.settings.resolution_w/Util.game.sqr_size)
+   Util.field_h = math.floor((Util.settings.resolution_h-Util.hud_height)/Util.game.sqr_size)
+
    for i=1, Util.field_w do
       field[i] = {}
       for j=1, Util.field_h do
@@ -65,7 +68,7 @@ local function reset_game(gamemode)
    fruit = Fruit.new(love.math.random(2, (Util.field_w)-1), love.math.random(2, (Util.field_h)-1))
    fruit = valid_fruit(snake, fruit)
 
-   for i=1, Util.initial_size-1 do
+   for i=1, Util.game.initial_size-1 do
       snake:add_segment()
    end
    for _, segment in ipairs(snake:get_segments()) do
@@ -75,8 +78,6 @@ local function reset_game(gamemode)
    if not Util.control_vars.is_mute then
       sfx.inicio:play()
    end
-
-   Util.score = 0
 
 end
 
@@ -103,7 +104,7 @@ local function game_mechanics()
          end
       end
       follow_segment(1, snake:get_direction(1))
-      love.timer.sleep(Util.velocity)
+      love.timer.sleep(Util.game.velocity)
    end
 
 
@@ -140,7 +141,7 @@ local function game_mechanics()
 
    local function make_point()
       snake:add_segment()
-      Util.score = Util.score + 100
+      Util.game.score = Util.game.score + 100
       apply_effect(fruit)
       fruit = valid_fruit(snake, reset_fruit(fruit))
       if not Util.control_vars.is_mute then
@@ -185,7 +186,7 @@ local function game_mechanics()
 end
 
 local function run()
-   
+
    if Util.current_screen == Util.screens.on_main then
       return GUI.draw_main_menu()
    elseif Util.current_screen == Util.screens.on_singleplayer_setup_1 then
@@ -193,8 +194,8 @@ local function run()
    elseif Util.current_screen == Util.screens.on_singleplayer_setup_2 then
       return GUI.draw_singleplayer_setup_menu_2()
    elseif Util.current_screen == Util.screens.on_singleplayer_game then
-      GUI.draw_HUD(0, 0, Util.score)
-      GUI.draw_field(0, Util.hud_height, settings.resolution_w, settings.resolution_h-Util.hud_height, field, Util.sqr_size)
+      GUI.draw_HUD(0, 0)
+      GUI.draw_field(0, Util.hud_height, settings.resolution_w, settings.resolution_h-Util.hud_height, field)
       game_mechanics()
       return actions.PASSTHROUGH
    elseif Util.current_screen == Util.screens.on_multiplayer_setup_1 then
@@ -212,7 +213,7 @@ local function run()
    elseif Util.current_screen == Util.screens.on_ranking then
       return GUI.draw_ranking_menu()
    end
-   
+
 end
 
 function engine.start()
@@ -220,7 +221,6 @@ function engine.start()
    GUI.create_functions.pause_menu()
    --GUI.create_functions.options_menu()
    Util.reset_game = reset_game
-   reset_game()
 end
 
 function love.draw()

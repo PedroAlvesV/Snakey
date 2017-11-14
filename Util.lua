@@ -104,21 +104,15 @@ Util.settings = {
    volume = 5,
 }
 
+Util.game = {}
+
 ---------------
 -- Values
 ---------------
 
 Util.settings.resolution_w, Util.settings.resolution_h = love.window.getMode()
-love.audio.setVolume(Util.settings.volume/10)
 
-Util.sqr_size = 20
 Util.hud_height = 40
-Util.initial_size = 4
-Util.velocity = 0.05
-Util.score = 0
-
-Util.field_w = math.floor(Util.settings.resolution_w/Util.sqr_size)
-Util.field_h = math.floor((Util.settings.resolution_h-Util.hud_height)/Util.sqr_size)
 
 Util.player_name = "Pedro" -- provisory
 
@@ -171,12 +165,12 @@ function Util.get_main_color()
 end
 
 function Util.is_highscore()
-   return (Util.score >= Util.ranking[#Util.ranking][2]) and (Util.score > 0)
+   return (Util.game.score >= Util.ranking[#Util.ranking][2]) and (Util.game.score > 0)
 end
 
 function Util.update_ranking()
    if Util.is_highscore() then
-      local new_score = Util.score
+      local new_score = Util.game.score
       local ranking = Util.ranking
       for pos, entry in ipairs(ranking) do
          if new_score >= entry[2] then
@@ -221,6 +215,7 @@ string.split = function(str, delimiter)
 end
 
 Util.current_screen = Util.screens.on_main
+love.audio.setVolume(Util.settings.volume/10)
 Util.ranking = Util.read_ranking()
 
 return Util
