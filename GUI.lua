@@ -22,11 +22,15 @@ end
 
 function GUI.draw_field(x, y, w, h, field)
    local sqr = Util.game.sqr_size
+   local total_field_width = Util.field_w * sqr
+   local total_field_height = Util.field_h * sqr
    for i=1, Util.field_w do
       for j=1, Util.field_h do
          if field[i][j] then
             --love.graphics.setColor(unpack(Util.random_color()))
-            love.graphics.rectangle("fill", (i*sqr-sqr)+x, (j*sqr-sqr)+y, sqr, sqr)
+            local rect_x = x + w/2 - total_field_width/2 + sqr*(i-1)
+            local rect_y = y + h/2 - total_field_height/2 + sqr*(j-1)
+            love.graphics.rectangle("fill", rect_x, rect_y, sqr, sqr)
          end
       end
    end
@@ -169,7 +173,11 @@ function GUI.create_functions.pause_menu()
    local pause_menu = menu.new_menu(0, 0, Util.settings.resolution_w, Util.settings.resolution_h)
    pause_menu:add_label('title', "Pause", {font = love.graphics.newFont(75), color = Util.settings.main_color, underline = true})
    local quit_game = function()
-      GUI.create_functions.death_menu()
+      local is_highscore = Util.is_highscore()
+      if is_highscore then
+         Util.update_ranking()
+      end
+      GUI.create_functions.death_menu(is_highscore)
       Util.current_screen = Util.screens.on_death
    end
    local bt_properties = {
@@ -197,12 +205,11 @@ function GUI.create_functions.pause_menu()
    return GUI.pause_menu
 end
 
-function GUI.create_functions.death_menu()
+function GUI.create_functions.death_menu(is_highscore)
    local death_menu = menu.new_menu(0, 0, Util.settings.resolution_w, Util.settings.resolution_h)
    local properties = {font = love.graphics.newFont(50), color = Util.settings.main_color}
    death_menu:add_label('title', "Game Over", properties)
-   if Util.is_highscore() then
-      Util.update_ranking()
+   if is_highscore then
 --      death_menu:add_label('highscore', "New highscore! Congratulations, "..Util.player_name.."!",
 --         {color = Util.settings.main_color, underline = true})
    end

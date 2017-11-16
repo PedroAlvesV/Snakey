@@ -40,7 +40,6 @@ Util.game_pallete = {
 }
 
 Util.resolutions = {
-   {640, 480},
    {800, 600},
    {1024, 768},
    {1280, 720},
@@ -104,7 +103,7 @@ Util.settings = {
    volume = 5,
 }
 
-Util.game = {}
+Util.game = {score = 0}
 
 ---------------
 -- Values

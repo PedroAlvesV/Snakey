@@ -54,8 +54,8 @@ end
 
 local function reset_game(gamemode)
 
-   Util.field_w = math.floor(Util.settings.resolution_w/Util.game.sqr_size)
-   Util.field_h = math.floor((Util.settings.resolution_h-Util.hud_height)/Util.game.sqr_size)
+   Util.field_w = math.floor(Util.resolutions[1][1]/Util.game.sqr_size)
+   Util.field_h = math.floor((Util.resolutions[1][2]-Util.hud_height)/Util.game.sqr_size)
 
    for i=1, Util.field_w do
       field[i] = {}
