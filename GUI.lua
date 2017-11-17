@@ -13,7 +13,7 @@ GUI.create_functions = {}
 
 function GUI.draw_HUD(x, y)
    local text_h = Util.hud_height*0.95
-   local name_text = love.graphics.newText(love.graphics.newFont(text_h), Util.player_name)
+   local name_text = love.graphics.newText(love.graphics.newFont(text_h), Util.game.player_nick)
    local score_text = love.graphics.newText(love.graphics.newFont(text_h), "Score: "..Util.game.score)
    love.graphics.setColor(Util.settings.main_color)
    love.graphics.draw(name_text, x, y)
@@ -108,11 +108,11 @@ function GUI.create_functions.singleplayer_setup_menu_1()
    local goto_next = function()
       local data = singleplayer_setup_menu_1:get_data()
       local function apply_game_settings()
-         local sqr_size = 20
+         local sqr_size = Util.settings.resolution_h*0.0333--20
          if data.sl_size.index == 1 then
-            sqr_size = 30
+            sqr_size = sqr_size + sqr_size/2
          elseif data.sl_size.index == 3 then
-            sqr_size = 10
+            sqr_size = sqr_size/2
          end
          local velocity = 0.05
          if data.sl_velocity.index == 1 then
@@ -128,10 +128,8 @@ function GUI.create_functions.singleplayer_setup_menu_1()
          }
       end
       apply_game_settings()
-      Util.reset_game()
-      Util.current_screen = Util.screens.on_singleplayer_game
-      --GUI.create_functions.singleplayer_setup_menu_2()
-      --Util.current_screen = Util.screens.on_singleplayer_setup_2
+      GUI.create_functions.singleplayer_setup_menu_2()
+      Util.current_screen = Util.screens.on_singleplayer_setup_2
    end
    local bt_properties = {
       label_color = {
@@ -157,6 +155,47 @@ function GUI.create_functions.singleplayer_setup_menu_2()
    local singleplayer_setup_menu_2 = menu.new_menu(0, 0, Util.settings.resolution_w, Util.settings.resolution_h)
    singleplayer_setup_menu_2:add_label('title', "Game Setup",
       {font = love.graphics.newFont(50), color = Util.settings.main_color, underline = true})
+   
+   --singleplayer_setup_menu_2:add_textinput('input_nick', "Player:", Util.settings.main_color)
+   
+   singleplayer_setup_menu_2:add_selector('sl_skin', "Skin:", {"White", "Light Blue", "Magenta", "Yellow"}, 1, Util.settings.main_color)
+   local back_func = function()
+      Util.current_screen = Util.screens.on_singleplayer_setup_1
+   end
+   local start_game = function()
+      local data = singleplayer_setup_menu_2:get_data()
+      local function apply_game_settings()
+         Util.game.player_nick = singleplayer_setup_menu_2:get_value('input_nick') or "Player 1"
+         Util.game.skin = Util.settings.main_color
+         local skin_value = singleplayer_setup_menu_2:get_value('sl_skin')
+         for _, value in ipairs(Util.game_pallete) do
+            if skin_value == value[2] then
+               Util.game.skin = value[1]
+               break
+            end
+         end
+      end
+      apply_game_settings()
+      Util.reset_game()
+      Util.current_screen = Util.screens.on_singleplayer_game
+   end
+   local bt_properties = {
+      label_color = {
+         default = Util.settings.main_color,
+         focused = colors.BLACK,
+      },
+      fill_colors = {
+         default = colors.BLACK,
+         focused = Util.settings.main_color,
+      },
+      outline_colors = {
+         default = Util.settings.main_color,
+         focused = Util.settings.main_color,
+      },
+   }
+   singleplayer_setup_menu_2:add_buttongroup('btgp_navigation', {"Back", "Start"},
+      {bt_properties, bt_properties}, {back_func, start_game})
+   
    GUI.singleplayer_setup_menu_2 = singleplayer_setup_menu_2
    return GUI.singleplayer_setup_menu_2
 end

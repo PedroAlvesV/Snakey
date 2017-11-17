@@ -102,6 +102,7 @@ Util.settings = {
    fullscreen = false,
    volume = 5,
 }
+Util.settings.resolution_w, Util.settings.resolution_h = love.window.getMode()
 
 Util.game = {score = 0}
 
@@ -109,11 +110,7 @@ Util.game = {score = 0}
 -- Values
 ---------------
 
-Util.settings.resolution_w, Util.settings.resolution_h = love.window.getMode()
-
 Util.hud_height = 40
-
-Util.player_name = "Pedro" -- provisory
 
 ---------------
 -- Functions
